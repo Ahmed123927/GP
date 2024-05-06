@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Box,
-  chakra,
   Container,
   Stack,
   Text,
@@ -15,10 +15,89 @@ import {
   useColorModeValue,
   List,
   ListItem,
+  useToast,
 } from '@chakra-ui/react';
 import { MdLocalShipping } from 'react-icons/md';
+import { useParams } from 'react-router-dom';
 
 export default function PostDetails() {
+  const { _id } = useParams();
+  const [post, setPost] = useState(null);
+  const toast = useToast();
+
+  useEffect(() => {
+    axios.get(`http://localhost:3500/client/showpost/${_id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+      }
+    })
+    .then(response => {
+      setPost(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching post details:', error);
+    });
+  }, [_id]);
+
+  if (!post) {
+    return <div>Loading...</div>;
+  }
+
+  const {
+    title = '',
+    cover = '',
+    description = '',
+    owner = {},
+    requirements = [],
+  } = post;
+
+  const {
+    userName = '',
+    CompanyName = '',
+  } = owner;
+
+  const parsedRequirements = requirements.map(req => {
+    if (typeof req === 'string') {
+      try {
+        return JSON.parse(req);
+      } catch (error) {
+        console.error('Error parsing requirement:', error);
+        return [];
+      }
+    }
+    return req;
+  });
+
+  const handleApply = () => {
+    axios.patch(`http://localhost:3500/user/apply/${_id}`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+      }
+    })
+    .then(response => {
+      toast({
+        title: "Application Successful",
+        description: "You are in the waiting list",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    })
+    .catch(error => {
+      if (error.response && error.response.status === 409) {
+        toast({
+          title: "Application Error",
+          description: "You have already applied for this post",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        console.error('Error applying for job:', error);
+      }
+    });
+  };
+
   return (
     <Container maxW={'7xl'}>
       <SimpleGrid
@@ -29,7 +108,7 @@ export default function PostDetails() {
           <Image
             rounded={'md'}
             alt={'product image'}
-            src='img/Central Hospital Business.png'
+            src={cover.secure_url}
             fit={'cover'}
             align={'center'}
             w={'100%'}
@@ -42,13 +121,13 @@ export default function PostDetails() {
               lineHeight={1.1}
               fontWeight={600}
               fontSize={{ base: '2xl', sm: '4xl', lg: '5xl' }}>
-              Post Tittle
+              {title}
             </Heading>
             <Text
               color={useColorModeValue('gray.900', 'gray.400')}
               fontWeight={300}
               fontSize={'2xl'}>
-              Category
+              {CompanyName}
             </Text>
           </Box>
 
@@ -59,11 +138,7 @@ export default function PostDetails() {
               <StackDivider borderColor={useColorModeValue('gray.200', 'gray.600')} />
             }>
             <VStack spacing={{ base: 4, sm: 6 }}>
-              
-              <Text fontSize={'lg'}>
-                Post Details Post DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost Details
-                Post DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost DetailsPost Details
-              </Text>
+              <Text fontSize={'lg'}>{description}</Text>
             </VStack>
             <Box>
               <Text
@@ -72,78 +147,23 @@ export default function PostDetails() {
                 fontWeight={'500'}
                 textTransform={'uppercase'}
                 mb={'4'}>
-              Required Skills
+                Required Skills
               </Text>
 
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
                 <List spacing={2}>
-                  <ListItem>Java</ListItem>
-                  <ListItem>HTML</ListItem>{' '}
-                  <ListItem>CSSr</ListItem>
-                </List>
-                <List spacing={2}>
-                  <ListItem>JS</ListItem>
-                  <ListItem>REACT</ListItem>
-                  <ListItem>test</ListItem>
+                  {parsedRequirements.map((reqArray, index) => (
+                    <ListItem key={index}>
+                      <List spacing={1}>
+                        {reqArray.map((requirement, idx) => (
+                          <ListItem key={idx}>{requirement}</ListItem>
+                        ))}
+                      </List>
+                    </ListItem>
+                  ))}
                 </List>
               </SimpleGrid>
             </Box>
-            {/* <Box>
-              <Text
-                fontSize={{ base: '16px', lg: '18px' }}
-                color={useColorModeValue('yellow.500', 'yellow.300')}
-                fontWeight={'500'}
-                textTransform={'uppercase'}
-                mb={'4'}>
-                Product Details
-              </Text>
-
-              <List spacing={2}>
-                <ListItem>
-                  <Text as={'span'} fontWeight={'bold'}>
-                    Between lugs:
-                  </Text>{' '}
-                  20 mm
-                </ListItem>
-                <ListItem>
-                  <Text as={'span'} fontWeight={'bold'}>
-                    Bracelet:
-                  </Text>{' '}
-                  leather strap
-                </ListItem>
-                <ListItem>
-                  <Text as={'span'} fontWeight={'bold'}>
-                    Case:
-                  </Text>{' '}
-                  Steel
-                </ListItem>
-                <ListItem>
-                  <Text as={'span'} fontWeight={'bold'}>
-                    Case diameter:
-                  </Text>{' '}
-                  42 mm
-                </ListItem>
-                <ListItem>
-                  <Text as={'span'} fontWeight={'bold'}>
-                    Dial color:
-                  </Text>{' '}
-                  Black
-                </ListItem>
-                <ListItem>
-                  <Text as={'span'} fontWeight={'bold'}>
-                    Crystal:
-                  </Text>{' '}
-                  Domed, scratch‑resistant sapphire crystal with anti‑reflective treatment
-                  inside
-                </ListItem>
-                <ListItem>
-                  <Text as={'span'} fontWeight={'bold'}>
-                    Water resistance:
-                  </Text>{' '}
-                  5 bar (50 metres / 167 feet){' '}
-                </ListItem>
-              </List>
-            </Box> */}
           </Stack>
 
           <Button
@@ -158,13 +178,13 @@ export default function PostDetails() {
             _hover={{
               transform: 'translateY(2px)',
               boxShadow: 'lg',
-            }}>
+            }}
+            onClick={handleApply}>
             Apply
           </Button>
 
           <Stack direction="row" alignItems="center" justifyContent={'center'}>
-            {/* <MdLocalShipping /> */}
-            {/* <Text>2-3 business days delivery</Text> */}
+            <Text>Get Started </Text>
           </Stack>
         </Stack>
       </SimpleGrid>

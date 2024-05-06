@@ -1,72 +1,57 @@
-import React from 'react'
-import ClientFeatured from '../../Components/clientFeatured/ClientFeatured'
-import ClientSection from '../../Components/clientSection/ClientSection'
-import ClientPosts from '../../Components/clientPosts/ClientPosts'
+// ClientHome.js
+import React, { useState, useEffect } from 'react';
+import ClientFeatured from '../../Components/clientFeatured/ClientFeatured';
+import ClientSection from '../../Components/clientSection/ClientSection';
+import ClientPosts from '../../Components/clientPosts/ClientPosts';
+import axios from 'axios'; // Import Axios or use fetch
 
 export default function ClientHome() {
-  const posts = [
-    // {
-    //   id: 1,
-    //   author: 'Ahmed Hussein',
-    //   authorRole: 'web company',
-    //   authorAvatar: 'https://bit.ly/sage-adebayo',
-    //   content: 'test post',
-    //   imageUrl: '/img/man.png',
-    //   imageAlt: 'Chakra UI',
-    // },
-    // {
-    //   id: 1,
-    //   author: 'Ahmed mahmoud',
-    //   authorRole: 'Creator, Chakra UI',
-    //   authorAvatar: 'https://bit.ly/sage-adebayo',
-    //   content: 'With Chakra UI, I wanted to sync...',
-    //   imageUrl: '/img/man.png',
-    //   imageAlt: 'Chakra UI',
-    // },
+  const [userData, setUserData] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
+  const [jwtToken, setJwtToken] = useState(null);
+  const token = localStorage.getItem('jwtToken');
 
-    // {
-    //   id: 2,
-    //   author: 'Segun Adebayo',
-    //   authorRole: 'Creator, Chakra UI',
-    //   authorAvatar: 'https://bit.ly/sage-adebayo',
-    //   content: 'With Chakra UI, I wanted to sync...',
-    //   imageUrl: '/img/man.png',
-    //   imageAlt: 'Chakra UI',
-    // },
-    // {
-    //   id: 2,
-    //   author: 'Segun Adebayo',
-    //   authorRole: 'Creator, Chakra UI',
-    //   authorAvatar: 'https://bit.ly/sage-adebayo',
-    //   content: 'With Chakra UI, I wanted to sync...',
-    //   imageUrl: '/img/man.png',
-    //   imageAlt: 'Chakra UI',
-    // },
-    // {
-    //   id: 2,
-    //   author: 'Segun Adebayo',
-    //   authorRole: 'Creator, Chakra UI',
-    //   authorAvatar: 'https://bit.ly/sage-adebayo',
-    //   content: 'With Chakra UI, I wanted to sync...',
-    //   imageUrl: '/img/man.png',
-    //   imageAlt: 'Chakra UI',
-    // },
-    // {
-    //   id: 2,
-    //   author: 'Segun Adebayo',
-    //   authorRole: 'Creator, Chakra UI',
-    //   authorAvatar: 'https://bit.ly/sage-adebayo',
-    //   content: 'With Chakra UI, I wanted to sync...',
-    //   imageUrl: '/img/man.png',
-    //   imageAlt: 'Chakra UI',
-    // },
-    // // 
-  ];
+  useEffect(() => {
+    // Fetch user data
+    axios.get('http://localhost:3500/client', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(response => {
+        setUserData(response.data.user);
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+
+    // Fetch user's own posts
+    axios.get('http://localhost:3500/client/ownposts', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(response => {
+        setUserPosts(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching user posts:', error);
+      });
+  }, [jwtToken]);
+
+  useEffect(() => {
+    // Load token from local storage
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      setJwtToken(token);
+    }
+  }, []);
+
   return (
     <div>
-      <ClientFeatured/>
-      <ClientSection/>
-      <ClientPosts posts={posts}/>
+      <ClientFeatured />
+      <ClientSection />
+      {userData && <ClientPosts user={userData} posts={userPosts} />}
     </div>
-  )
+  );
 }

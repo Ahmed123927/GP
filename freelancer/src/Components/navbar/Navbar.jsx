@@ -30,21 +30,33 @@ const Navbar = () => {
     const fetchUserData = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get('http://localhost:3500/client', {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+        const role = localStorage.getItem('role'); // Fetch role from localStorage
+        let response;
+  
+        if (role === 'freelancer') {
+          response = await axios.get('http://localhost:3500/user', {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          });
+        } else {
+          response = await axios.get('http://localhost:3500/client', {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          });
+        }
+  
         setCurrentUser(response.data.user);
       } catch (error) {
         console.error('Error fetching user data:', error);
         setError('Error fetching user data. Please try again.');
       }
     };
-
+  
     fetchUserData();
   }, []);
-
+  
   // Logout function
   const handleLogout = async () => {
     try {

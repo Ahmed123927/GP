@@ -1,10 +1,15 @@
 import React from 'react';
 import { Container, SimpleGrid, Text, Heading, Box, useColorModeValue, Center, Image } from '@chakra-ui/react';
-import PostCard from './../postCard/PostCard'; // Import the PostCard component
+import PostCard from './../postCard/PostCard'; 
 
-const ClientPosts = ({ posts }) => {
-  const bgColor = useColorModeValue('gray.100', 'gray.700'); // Adjust background color based on color mode
-  const textColor = useColorModeValue('teal.500', 'teal.300'); // Adjust text color based on color mode
+const ClientPosts = ({ user, posts }) => {
+  const bgColor = useColorModeValue('gray.100', 'gray.700'); 
+  const textColor = useColorModeValue('teal.500', 'teal.300'); 
+
+  // Check if posts is undefined or null before accessing its length
+  if (!posts) {
+    return null; // or display a loading spinner or message
+  }
 
   return (
     <Container maxW="container.xl" centerContent>
@@ -24,9 +29,7 @@ const ClientPosts = ({ posts }) => {
         {posts.length > 0 ? (
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} align="stretch">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post}>
-                <Text isTruncated>{post.content}</Text>
-              </PostCard>
+              <PostCard key={post._id} post={post} user={user} />
             ))}
           </SimpleGrid>
         ) : (

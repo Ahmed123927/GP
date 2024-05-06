@@ -3,8 +3,8 @@ import { Container, SimpleGrid, Text, Heading, Box, useColorModeValue } from '@c
 import PostCard from './../postCard/PostCard';
 
 const PostList = ({ posts }) => {
-  const bgColor = useColorModeValue('gray.100', 'gray.700'); // Adjust background color based on color mode
-  const textColor = useColorModeValue('teal.500', 'teal.300'); // Adjust text color based on color mode
+  const bgColor = useColorModeValue('gray.100', 'gray.700'); 
+  const textColor = useColorModeValue('teal.500', 'teal.300'); 
 
   return (
     <Container maxW="container.xl" centerContent>

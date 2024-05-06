@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // Import js-cookie library
+import Cookies from 'js-cookie';
 import {
   Button,
   Flex,
@@ -19,65 +19,66 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    // Check if the user is already logged in
-    if (localStorage.getItem('jwtToken')) {
-      console.log('User is already logged in.');
-      return;
-    }
-
-    // Validation: Check if email and password are provided
-    if (!email || !password) {
-      setErrorMsg('Please provide both email and password.');
-      return;
-    }
-
-    setErrorMsg(''); // Clear any previous error message
-
+    setErrorMsg('');
+  
     try {
       console.log('Logging in...');
       const response = await axios.post('http://localhost:3500/auth/login', {
         email,
         password,
       });
-
+      console.log('Login response:', response);
+  
       const token = response.data.token;
+      console.log('JWT token:', token);
+  
+      if (token) {
+        
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('userId');
+  
+        Cookies.remove('jwt');
+  
+        localStorage.setItem('jwtToken', token);
+        Cookies.set('jwt', token, { expires: 7 }); 
+  
+        const tokenParts = token.split('.');
+        const payload = JSON.parse(atob(tokenParts[1]));
+        console.log('Payload:', payload);
+  
+        const userId = payload.id;
+        console.log('User ID:', userId);
+  
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('role', payload.role);
 
-      // Store the JWT token in both local storage and as a cookie
-      localStorage.setItem('jwtToken', token);
-      Cookies.set('jwt', token, { expires: 7 });
-
-      const tokenParts = token.split('.');
-      const payload = JSON.parse(atob(tokenParts[1]));
-
-      const userId = payload.id;
-
-      // Store the user ID in local storage
-      localStorage.setItem('userId', userId);
-
-      switch (payload.role) {
-        case 'client':
-          navigate('/client');
-          break;
-        case 'freelancer':
-          navigate('/freelancer');
-          break;
-        case 'admin':
-          navigate('/admin');
-          break;
-        default:
-          console.error('Unexpected role:', payload.role);
-          break;
-      }
-    } catch (error) {
-      // Handle specific errors and display appropriate messages
-      if (error.response && error.response.status === 401) {
-        setErrorMsg('Invalid email or password. Please try again.');
+        console.log('Role:', payload.role);
+        switch (payload.role) {
+          case 'client':
+            navigate('/client');
+            break;
+          case 'freelancer':
+            navigate('/freelancer');
+            break;
+          case 'admin':
+            navigate('/admin');
+            break;
+          default:
+            console.error('Unexpected role:', payload.role);
+            break;
+        }
       } else {
-        console.error('Login failed:', error);
         setErrorMsg('Login failed. Please try again.');
       }
+      
+      // Ensure proper cleanup
+      window.location.reload(); // Reload the page to clear any stale data or components
+    } catch (error) {
+      console.error('Login failed:', error);
+      setErrorMsg('Login failed. Please try again.');
     }
   };
+  
 
   return (
     <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>

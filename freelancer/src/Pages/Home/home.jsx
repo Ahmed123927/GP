@@ -61,7 +61,7 @@ const home = () => {
       authorAvatar: 'https://bit.ly/sage-adebayo',
       content: 'With Chakra UI, I wanted to sync...',
       imageUrl: '/img/man.png',
-      imageAlt: 'Chakra UI',
+      
     },
     // Add more posts as needed
   ];
@@ -108,7 +108,7 @@ const home = () => {
       <FeaturedFreelancer />
     </div>
     <div key="postList">
-      <PostList posts={posts} />
+     
     </div>
     <div key="contact">
       <Contact />

@@ -22,6 +22,10 @@ const Featured = () => {
     visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: 'easeOut' } },
   };
 
+  const handleExploreJobs = () => {
+    window.location.href = '/freelancer-posts'; // Navigate to /freelancer-posts
+  };
+
   return (
     <motion.div
       initial="hidden"
@@ -51,7 +55,7 @@ const Featured = () => {
               </Text>{' '}
               journey with unparalleled opportunities to showcase your skills and expertise.
             </Heading>
-            <Button colorScheme="teal" size="lg">
+            <Button colorScheme="teal" size="lg" onClick={handleExploreJobs}>
               Explore Jobs
             </Button>
           </motion.div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Box, Heading, Text, Flex, Button, Input, Textarea } from "@chakra-ui/react";
 import Cookies from 'js-cookie';
+import { Link } from 'react-router-dom';
 
 function ClientAddPost() {
   const [title, setTitle] = useState("");
@@ -51,7 +52,6 @@ function ClientAddPost() {
   };
 
   const handleAddRequirement = () => {
-    // Add the skill to the requirements array
     if (category.trim() !== "") {
       setRequirements([...requirements, category.trim()]);
       setCategory(""); // Clear the input field
@@ -96,14 +96,15 @@ function ClientAddPost() {
         </Box>
 
         <Flex justifyContent="space-between" alignItems="center">
-          <a href="#" style={{ textDecoration: 'none' }}>
-            <Flex alignItems="center">
-              <Box as="span" w={6} h={6} borderWidth={1} borderRadius="full" mr={2} />
-              <Text fontSize="lg" fontWeight="bold" color="blue.500">Back to Posts</Text>
-            </Flex>
-          </a>
-          <Button type="submit" size="lg" colorScheme="blue">Save</Button>
-        </Flex>
+  {/* Use Link from react-router-dom */}
+  <Link to="/client" style={{ textDecoration: 'none' }}>
+    <Flex alignItems="center">
+      <Box as="span" w={6} h={6} borderWidth={1} borderRadius="full" mr={2} />
+      <Text fontSize="lg" fontWeight="bold" color="blue.500">Back to Home</Text>
+    </Flex>
+  </Link>
+  <Button type="submit" size="lg" colorScheme="blue">Save</Button>
+</Flex>
       </form>
       {errorMsg && <Text color="red">{errorMsg}</Text>}
     </Box>

@@ -12,25 +12,30 @@ import {
   IconButton,
   Image,
   Button,
-  useColorModeValue, // Import useColorModeValue
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { BiLike, BiChat, BiCheckCircle } from 'react-icons/bi';
+import { BiLike, BiCheckCircle, BiEdit, BiTrash } from 'react-icons/bi';
 
-const PostCard = ({ post }) => {
-  // Check if post is undefined or null
-  if (!post) {
-    return null; // Or handle appropriately
+const PostCard = ({ post, user }) => {
+  if (!post || !user) {
+    return null; // Handle case where post or user data is missing
   }
 
   const {
-    author = '',
-    authorRole = '',
-    authorAvatar = '',
-    content = '',
-    imageUrl = '',
-    imageAlt = '',
+    _id,
+    title = '',
+    cover = { secure_url: '' }, // Provide default value for cover object
+    description = '',
+    owner = '',
   } = post;
+
+  const {
+    userName = '',
+    img, // Ignore image data if null
+    CompanyName = '',
+    role = '',
+  } = user;
 
   const cardBodyRef = useRef();
   const [isLiked, setIsLiked] = useState(false);
@@ -38,25 +43,40 @@ const PostCard = ({ post }) => {
   useEffect(() => {
     const maxHeight = cardBodyRef.current.scrollHeight;
     cardBodyRef.current.style.height = `${maxHeight}px`;
-  }, [content]);
+  }, [description]);
 
   const handleLikeToggle = () => {
     setIsLiked(!isLiked);
   };
 
-  const borderColor = useColorModeValue('gray.200', 'white'); // Conditionally set borderColor
+  const handleUpdateClick = () => {
+    // Implement update logic
+  };
+
+  const handleDeleteClick = () => {
+    // Implement delete logic
+  };
+
+  const handleApplyClick = () => {
+  
+    console.log("Post ID:", _id);
+    console.log("Navigation URL:", `/applicant/${_id}`);
+    window.location.href = `/applicant/${_id}`;
+  };
+
+  const borderColor = useColorModeValue('gray.200', 'white');
 
   return (
-    <Box>
-      <Card maxW="md" borderColor={borderColor} borderWidth="1px" borderRadius="md" p={4}>
+    <Box style={{ height: '100%' }}>
+      <Card maxW="md" borderColor={borderColor} borderWidth="1px" borderRadius="md" p={4} h="100%">
         <CardHeader>
           <Flex spacing="4">
             <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-              <Avatar name={author} src={authorAvatar} />
+              {img && <Avatar name={userName} src={img.secure_url} />}
 
               <Box>
-                <Heading size="sm">{author}</Heading>
-                <Text>{authorRole}</Text>
+                <Heading size="sm">{userName}</Heading>
+                <Text>{CompanyName}</Text>
               </Box>
             </Flex>
             <IconButton
@@ -68,26 +88,39 @@ const PostCard = ({ post }) => {
           </Flex>
         </CardHeader>
         <CardBody ref={cardBodyRef} overflow="auto" maxHeight="100px">
-          <Text>{content}</Text>
+          <Text>{title}</Text>
         </CardBody>
-        <Image objectFit="cover" src={imageUrl} alt={imageAlt} />
+        <Box h="200px" overflow="hidden">
+          {cover.secure_url && <Image src={cover.secure_url} alt={title} h="100%" w="100%" />}
+        </Box>
 
         <CardFooter justify="space-between" flexWrap="wrap">
-          <Button
+          <>
+            <IconButton
+              flex="1"
+              variant="ghost"
+              aria-label="Edit post"
+              icon={<BiEdit />}
+              onClick={handleUpdateClick}
+            />
+            <IconButton
+              flex="1"
+              variant="ghost"
+              aria-label="Delete post"
+              icon={<BiTrash />}
+              onClick={handleDeleteClick}
+            />
+          </>
+          {/* Add IconButton to show who has applied */}
+          <IconButton
             flex="1"
             variant="ghost"
-            leftIcon={<BiLike />}
-            color={isLiked ? 'blue.500' : 'black.500'}
-            onClick={handleLikeToggle}
-          >
-            Like
-          </Button>
-          {/* <Button flex="1" variant="ghost" leftIcon={<BiChat />}>
-            Comment
-          </Button> */}
-          <Button flex="1" variant="ghost" leftIcon={<BiCheckCircle />} >
-            Apply
-          </Button>
+            colorScheme="teal"
+            aria-label="Show applicants"
+            icon={<BiCheckCircle />}
+            size="md"
+            onClick={handleApplyClick}
+          />
         </CardFooter>
       </Card>
     </Box>
