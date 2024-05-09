@@ -17,6 +17,7 @@ import RoleRegister from "./Pages/roleRegister/RoleRegister";
 import Register from "./Pages/register/Register";
 import FreelancerPostsPage from "./Pages/freelancerPostsPage/FreelancerPostsPage";
 import ShowApplicant from "./Pages/showApplicant/ShowApplicant";
+import Landing from "./Pages/landing/Landing";
 
 function App() {
  
@@ -34,7 +35,8 @@ function App() {
         <Routes>
        
 
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/" element={<Landing/>} />
+          <Route path="/login" element={<LoginPage/>} />
           <Route path="/register" element={<Register />} />
           <Route
             path="/*"

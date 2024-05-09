@@ -171,7 +171,8 @@ function UserRegistration({ selectedRole, onRegistrationSuccess }) {
       const data = await response.json();
       console.log('Registration successful:', data);
       onRegistrationSuccess(); 
-    } catch (error) {
+      window.location.href = '/login';
+        } catch (error) {
       console.error('Registration failed:', error);
     }
   };

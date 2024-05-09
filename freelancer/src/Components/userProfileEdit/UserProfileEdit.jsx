@@ -29,6 +29,8 @@ export default function UserProfileEdit() {
     skills: [],
   });
 
+  const [previousSkills, setPreviousSkills] = useState([]);
+
   const [imageUrl, setImageUrl] = useState('');
   const [newSkill, setNewSkill] = useState('');
   const role = localStorage.getItem('role');
@@ -55,49 +57,6 @@ export default function UserProfileEdit() {
     reader.readAsDataURL(file);
   };
 
-  const handleUpdate = async () => {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      let updateUrl;
-
-      if (role === 'freelancer') {
-        updateUrl = 'http://localhost:3500/user/update';
-      } else {
-        updateUrl = 'http://localhost:3500/client/update';
-      }
-
-      let userData = { ...profileData };
-
-      if (profileData.img instanceof File) {
-        const formData = new FormData();
-        formData.append('file', profileData.img);
-
-        const uploadResponse = await axios.patch('http://localhost:3500/user/image', formData, {
-          headers: {
-            'Authorization': `Bearer ${jwtToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        userData.img = uploadResponse.data.secure_url;
-      }
-
-      if (!(profileData.img instanceof File)) {
-        delete userData.img;
-      }
-
-      const response = await axios.patch(updateUrl, userData, {
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-        },
-      });
-
-      console.log('User data updated successfully:', response.data);
-    } catch (error) {
-      console.error('Error updating user data:', error);
-    }
-  };
-
   const handleAddSkill = () => {
     if (newSkill.trim() !== '' && !profileData.skills.includes(newSkill.trim())) {
       const updatedSkills = [...profileData.skills, newSkill.trim()];
@@ -108,7 +67,7 @@ export default function UserProfileEdit() {
       setNewSkill('');
     }
   };
-
+  
   const handleRemoveSkill = (index) => {
     const updatedSkills = [...profileData.skills];
     updatedSkills.splice(index, 1);
@@ -117,24 +76,72 @@ export default function UserProfileEdit() {
       skills: updatedSkills,
     });
   };
+  
+  const handleUpdate = async () => {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      let updateUrl;
+  
+      if (role === 'freelancer') {
+        updateUrl = 'http://localhost:3500/user/update';
+      } else {
+        updateUrl = 'http://localhost:3500/client/update';
+      }
+  
+      let userData = { ...profileData };
+  
+      if (profileData.img instanceof File) {
+        const formData = new FormData();
+        formData.append('file', profileData.img);
+  
+        const uploadResponse = await axios.patch('http://localhost:3500/user/image', formData, {
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        userData.img = uploadResponse.data.secure_url;
+      }
+  
+      if (!(profileData.img instanceof File)) {
+        delete userData.img;
+      }
+  
+      // Merge previous skills with new skills
+      const mergedSkills = [...previousSkills, ...profileData.skills];
+      userData.skills = mergedSkills;
+  
+      const response = await axios.patch(updateUrl, userData, {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+  
+      console.log('User data updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  };
+  
 
   useEffect(() => {
     const jwtToken = localStorage.getItem('jwtToken');
     let fetchUrl;
-  
+
     if (role === 'freelancer') {
       fetchUrl = 'http://localhost:3500/user';
     } else {
       fetchUrl = 'http://localhost:3500/client';
     }
-  
+
     axios.interceptors.request.use(config => {
       if (jwtToken) {
         config.headers.Authorization = `Bearer ${jwtToken}`;
       }
       return config;
     });
-  
+
     axios.get(fetchUrl)
       .then(response => {
         const userData = response.data.user;
@@ -148,6 +155,7 @@ export default function UserProfileEdit() {
           skills: typeof userData.skills === 'string' ? userData.skills.split(',').map(skill => skill.trim()) : [],
         });
         setImageUrl(userData.img ? userData.img.secure_url || '' : '');
+        setPreviousSkills(userData.skills || []); // Fetch previous skills
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
@@ -202,22 +210,30 @@ export default function UserProfileEdit() {
           <Input type="tel" name="phone" value={profileData.phone} onChange={handleChange} />
         </FormControl>
         {role === 'freelancer' && (
-          <FormControl>
-            <FormLabel>Skills</FormLabel>
-            <Flex alignItems="center">
-              <Input flex="1" placeholder="Enter a skill" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
-              <Button size="lg" ml={2} colorScheme="blue" onClick={handleAddSkill}>Add</Button>
-            </Flex>
-            <Flex flexWrap="wrap" mt={2}>
-              {profileData.skills.map((skill, index) => (
-                <Tag key={index} size="md" borderRadius="full" variant="solid" colorScheme="teal" mr={2} mb={2}>
-                  <TagLabel>{skill}</TagLabel>
-                  <TagCloseButton onClick={() => handleRemoveSkill(index)} />
-                </Tag>
-              ))}
-            </Flex>
-          </FormControl>
-        )}
+  <FormControl>
+    <FormLabel>Skills</FormLabel>
+    <Flex alignItems="center">
+      <Input flex="1" placeholder="Enter a skill" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
+      <Button size="lg" ml={2} colorScheme="blue" onClick={handleAddSkill}>Add</Button>
+    </Flex>
+    <Flex flexWrap="wrap" mt={2}>
+      {/* Render existing skills */}
+      {profileData.skills.map((skill, index) => (
+        <Tag key={index} size="md" borderRadius="full" variant="solid" colorScheme="teal" mr={2} mb={2}>
+          <TagLabel>{skill}</TagLabel>
+          <TagCloseButton onClick={() => handleRemoveSkill(index)} />
+        </Tag>
+      ))}
+      {/* Render previous skills */}
+      {previousSkills.map((skill, index) => (
+        <Tag key={index} size="md" borderRadius="full" variant="outline" colorScheme="gray" mr={2} mb={2}>
+          <TagLabel>{skill}</TagLabel>
+        </Tag>
+      ))}
+    </Flex>
+  </FormControl>
+)}
+
         <Flex justifyContent="space-between" alignItems="center">
           <Button onClick={handleUpdate} colorScheme="blue">Update Profile</Button>
         </Flex>

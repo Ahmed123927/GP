@@ -7,15 +7,35 @@ import {
   Text,
   Stack,
   Button,
-  Link,
   Badge,
   useColorModeValue,
 } from '@chakra-ui/react';
+import axios from 'axios'; 
 
 export default function FreelancerCard({ id, name, username, bio, tags, avatarSrc }) {
-  const handleApplyClick = () => {
-    // Navigate to the "/applicant/:id" route using window.location.href
-    window.location.href = `/applicant/${id}`;
+  
+  const handleSendMessage = async () => {
+    try {
+      
+      const response = await axios.post(`http://localhost:3500/message/send/${id}`, null, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`, 
+        },
+      });
+
+      if (response.status === 201) {
+        
+        window.location.href = '/chat'; 
+      } else {
+
+        console.error('Failed to create new chat:', response.statusText);
+        console.log(response) 
+
+      }
+    } catch (error) {
+      
+      console.error('An error occurred while creating a new chat:', error);
+    }
   };
 
   return (
@@ -75,7 +95,7 @@ export default function FreelancerCard({ id, name, username, bio, tags, avatarSr
             fontSize={'sm'}
             rounded={'full'}
             onClick={() => {
-              
+              // Implement decline functionality if needed
             }}
             _focus={{
               bg: 'gray.200',
@@ -97,8 +117,9 @@ export default function FreelancerCard({ id, name, username, bio, tags, avatarSr
             _focus={{
               bg: 'blue.500',
             }}
-            onClick={handleApplyClick}>
-            Accept
+            onClick={handleSendMessage} // Call handleSendMessage function when the button is clicked
+           >
+          message
           </Button>
         </Stack>
       </Box>

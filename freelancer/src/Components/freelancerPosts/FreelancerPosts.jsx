@@ -22,6 +22,8 @@ export default function FreelancerPosts() {
   }, []);
 
   return (
+    
+    
     <Flex flexWrap="wrap" justifyContent="center" alignItems="flex-start">
       {posts.map(post => {
         return (

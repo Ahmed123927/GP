@@ -6,6 +6,8 @@ import { Box, Flex, Heading, Text } from '@chakra-ui/react'; // Import Chakra UI
 export default function ApplicatFreelancers() {
   const { _id } = useParams();
   const [freelancers, setFreelancers] = useState([]);
+  const [conversations, setConversations] = useState([]); // Define conversations state
+  const [activeChatIndex, setActiveChatIndex] = useState(0); // Define activeChatIndex state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +43,8 @@ export default function ApplicatFreelancers() {
               bio={freelancer.country}
               tags={freelancer.skills}
               avatarSrc={freelancer.img.secure_url}
+              setConversations={setConversations}
+              setActiveChatIndex={setActiveChatIndex} // Pass setActiveChatIndex here
             />
           </Box>
         ))}
