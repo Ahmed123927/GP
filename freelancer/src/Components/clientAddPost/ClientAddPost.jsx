@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Box, Heading, Text, Flex, Button, Input, Textarea } from "@chakra-ui/react";
+import { Box, Heading, Text, Flex, Button, Input, Textarea, useToast } from "@chakra-ui/react";
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ function ClientAddPost() {
   const [cover, setCover] = useState(null);
   const [requirements, setRequirements] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
+  const toast = useToast(); // Initialize the useToast hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,7 +41,15 @@ function ClientAddPost() {
 
       console.log("Post response:", response);
 
-      // Handle success
+      // Show success toast
+      toast({
+        title: "Success!",
+        description: "Post added successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
     } catch (error) {
       console.error("Error posting:", error);
       setErrorMsg("Failed to add post. Please try again.");
@@ -96,15 +105,15 @@ function ClientAddPost() {
         </Box>
 
         <Flex justifyContent="space-between" alignItems="center">
-  {/* Use Link from react-router-dom */}
-  <Link to="/client" style={{ textDecoration: 'none' }}>
-    <Flex alignItems="center">
-      <Box as="span" w={6} h={6} borderWidth={1} borderRadius="full" mr={2} />
-      <Text fontSize="lg" fontWeight="bold" color="blue.500">Back to Home</Text>
-    </Flex>
-  </Link>
-  <Button type="submit" size="lg" colorScheme="blue">Save</Button>
-</Flex>
+          {/* Use Link from react-router-dom */}
+          <Link to="/client" style={{ textDecoration: 'none' }}>
+            <Flex alignItems="center">
+              <Box as="span" w={6} h={6} borderWidth={1} borderRadius="full" mr={2} />
+              <Text fontSize="lg" fontWeight="bold" color="blue.500">Back to Home</Text>
+            </Flex>
+          </Link>
+          <Button type="submit" size="lg" colorScheme="blue">Save</Button>
+        </Flex>
       </form>
       {errorMsg && <Text color="red">{errorMsg}</Text>}
     </Box>

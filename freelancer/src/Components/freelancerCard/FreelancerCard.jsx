@@ -12,28 +12,27 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios'; 
 
+const staticMessage = "You are accepted in my post";
+
 export default function FreelancerCard({ id, name, username, bio, tags, avatarSrc }) {
   
   const handleSendMessage = async () => {
     try {
-      
-      const response = await axios.post(`http://localhost:3500/message/send/${id}`, null, {
+      const response = await axios.post(`http://localhost:3500/message/send/${id}`, {
+        message: staticMessage,
+      }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`, 
         },
       });
 
       if (response.status === 201) {
-        
         window.location.href = '/chat'; 
       } else {
-
         console.error('Failed to create new chat:', response.statusText);
         console.log(response) 
-
       }
     } catch (error) {
-      
       console.error('An error occurred while creating a new chat:', error);
     }
   };

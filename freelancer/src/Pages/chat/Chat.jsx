@@ -1,9 +1,11 @@
 import React from 'react'
-import Chatt from '../../Components/chat/Chat'
+import Chating from '../../Components/chating/Chating'
+// import Chatt from '../../Components/chat/Chat'
 const Chat = () => {
   return (
     <div>
-      <Chatt/>
+      {/* <Chatt/> */}
+      <Chating/>
     </div>
   )
 }

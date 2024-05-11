@@ -15,6 +15,7 @@ import {
   Tag,
   TagCloseButton,
   TagLabel,
+  useToast,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 
@@ -34,6 +35,7 @@ export default function UserProfileEdit() {
   const [imageUrl, setImageUrl] = useState('');
   const [newSkill, setNewSkill] = useState('');
   const role = localStorage.getItem('role');
+  const toast = useToast();
 
   const handleChange = (e) => {
     setProfileData({
@@ -119,6 +121,15 @@ export default function UserProfileEdit() {
       });
   
       console.log('User data updated successfully:', response.data);
+
+      toast({
+        title: "Success!",
+        description: "Profile updated successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
     } catch (error) {
       console.error('Error updating user data:', error);
     }
@@ -210,30 +221,29 @@ export default function UserProfileEdit() {
           <Input type="tel" name="phone" value={profileData.phone} onChange={handleChange} />
         </FormControl>
         {role === 'freelancer' && (
-  <FormControl>
-    <FormLabel>Skills</FormLabel>
-    <Flex alignItems="center">
-      <Input flex="1" placeholder="Enter a skill" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
-      <Button size="lg" ml={2} colorScheme="blue" onClick={handleAddSkill}>Add</Button>
-    </Flex>
-    <Flex flexWrap="wrap" mt={2}>
-      {/* Render existing skills */}
-      {profileData.skills.map((skill, index) => (
-        <Tag key={index} size="md" borderRadius="full" variant="solid" colorScheme="teal" mr={2} mb={2}>
-          <TagLabel>{skill}</TagLabel>
-          <TagCloseButton onClick={() => handleRemoveSkill(index)} />
-        </Tag>
-      ))}
-      {/* Render previous skills */}
-      {previousSkills.map((skill, index) => (
-        <Tag key={index} size="md" borderRadius="full" variant="outline" colorScheme="gray" mr={2} mb={2}>
-          <TagLabel>{skill}</TagLabel>
-        </Tag>
-      ))}
-    </Flex>
-  </FormControl>
-)}
-
+          <FormControl>
+            <FormLabel>Skills</FormLabel>
+            <Flex alignItems="center">
+              <Input flex="1" placeholder="Enter a skill" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
+              <Button size="lg" ml={2} colorScheme="blue" onClick={handleAddSkill}>Add</Button>
+            </Flex>
+            <Flex flexWrap="wrap" mt={2}>
+              {/* Render existing skills */}
+              {profileData.skills.map((skill, index) => (
+                <Tag key={index} size="md" borderRadius="full" variant="solid" colorScheme="teal" mr={2} mb={2}>
+                  <TagLabel>{skill}</TagLabel>
+                  <TagCloseButton onClick={() => handleRemoveSkill(index)} />
+                </Tag>
+              ))}
+              {/* Render previous skills */}
+              {previousSkills.map((skill, index) => (
+                <Tag key={index} size="md" borderRadius="full" variant="outline" colorScheme="gray" mr={2} mb={2}>
+                  <TagLabel>{skill}</TagLabel>
+                </Tag>
+              ))}
+            </Flex>
+          </FormControl>
+        )}
         <Flex justifyContent="space-between" alignItems="center">
           <Button onClick={handleUpdate} colorScheme="blue">Update Profile</Button>
         </Flex>

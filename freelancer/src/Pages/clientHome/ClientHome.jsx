@@ -4,6 +4,7 @@ import ClientFeatured from '../../Components/clientFeatured/ClientFeatured';
 import ClientSection from '../../Components/clientSection/ClientSection';
 import ClientPosts from '../../Components/clientPosts/ClientPosts';
 import axios from 'axios'; // Import Axios or use fetch
+import Contact from '../../Components/contact/Contact';
 
 export default function ClientHome() {
   const [userData, setUserData] = useState(null);
@@ -52,6 +53,7 @@ export default function ClientHome() {
       <ClientFeatured />
       <ClientSection />
       {userData && <ClientPosts user={userData} posts={userPosts} />}
+      <Contact/>
     </div>
   );
 }

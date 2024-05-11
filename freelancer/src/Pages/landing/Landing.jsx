@@ -4,6 +4,9 @@ import React from 'react';
 // import HomeSlider from '../../Components/homeSlider/HomeSlider';
 import { Link } from 'react-router-dom';
 import FindWork from '../../Components/findWork/FindWork';
+import OurClient from '../../Components/ourClient/OurClient'
+import { Container, chakra, SimpleGrid, useColorModeValue } from '@chakra-ui/react';
+import Footer from '../../Components/footer/Footer'
 // import FAQs from '../../Components/faq/FAQ';
 // import { Helmet } from 'react-helmet';
 // import graphicsImage from '../../images/graphics.jpg';
@@ -16,9 +19,43 @@ import FindWork from '../../Components/findWork/FindWork';
 // import videoImage from '../../images/video.jpg';
 // import dataImage from '../../images/data.jpg';
 // import lifestyleImage from '../../images/lifestyle.jpg';
-import imgProfile from'../../images/profile.png';
+// import imgProfile from'../../images/profile.png';
+import imgProfile from'../../../public/img/test.png';
+
 import '../landing/landing.css'
+import Banner from '../../Components/bannar/Banner';
+import LandingSlaider from '../../Components/landingSlaider/LandingSlaider';
 export default function Landing() {
+  const testimonials = [
+    {
+      name: 'Ben Parker',
+      position: 'CEO',
+      company: 'Olpers',
+      image: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&auto=format&fit=crop&w=334&q=80',
+      content: `Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper`
+    },
+    {
+      name: 'Jena Karlis',
+      position: 'GM',
+      company: 'Olpers',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=334&q=80',
+      content: `Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper`
+    },
+    {
+      name: 'Vicky Hald',
+      position: 'CFO',
+      company: 'Olpers',
+      image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&auto=format&fit=crop&w=334&q=80',
+      content: `Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper`
+    },
+    {
+      name: 'Vicky Hald',
+      position: 'CFO',
+      company: 'Olpers',
+      image: 'https://images.unsplash.com/photo-1606513542745-97629752a13b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80',
+      content: `Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper`
+    }
+  ];
   return (
     <div>
    
@@ -181,10 +218,30 @@ export default function Landing() {
 </header>
 
     </main>
+    <LandingSlaider/>
+    <Container maxW="5xl" p={{ base: 5, md: 10 }} bg={useColorModeValue('gray.200', 'gray.600')}>
+      <chakra.h3 fontSize="3xl" fontWeight="bold" mb={8} textAlign="center">
+        Our Clients
+      </chakra.h3>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
+        {testimonials.map((testimonial, index) => (
+          <OurClient
+            key={index}
+            name={testimonial.name}
+            position={testimonial.position}
+            company={testimonial.company}
+            image={testimonial.image}
+            content={testimonial.content}
+          />
+        ))}
+      </SimpleGrid>
+    </Container>
     <FindWork />
-
-    {/* Footer*/}
-  
+       {/* Footer*/}
+    <Container maxW="5xl" p="6">
+      <Banner />
+    </Container>
+    <Footer/>
     {/* Bootstrap core JS*/}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" />
     {/* Core theme JS*/}

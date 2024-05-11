@@ -11,7 +11,7 @@ import se19 from '../../images/se19.jpg';
 import se24 from '../../images/se24.jpg';
 import se25 from '../../images/se25.jpg';
 import se26 from '../../images/se26.jpg';
-import opportunity from '../../images/opportunity.png';
+// import opportunity from '   ../../images/opportunity.png';
 
 export default function FindWork() {
 
@@ -260,7 +260,7 @@ export default function FindWork() {
               </div>
 
 
-
+{/* 
               <div className='col-md-3 '>
                 <div className=' text-center'>
                   <figure className=' '>
@@ -269,7 +269,7 @@ export default function FindWork() {
                   <h5 className="">3. Get an order</h5>
                   <p>Your timeline starts once the client provides the info you need.</p>
                 </div>
-              </div>
+              </div> */}
 
             </div>
 
