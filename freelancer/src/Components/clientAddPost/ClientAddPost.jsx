@@ -63,7 +63,7 @@ function ClientAddPost() {
   const handleAddRequirement = () => {
     if (category.trim() !== "") {
       setRequirements([...requirements, category.trim()]);
-      setCategory(""); // Clear the input field
+      setCategory(""); 
     }
   };
 
@@ -73,7 +73,7 @@ function ClientAddPost() {
         Add a New Post
       </Heading>
       <Text color="gray.600" mb={6} textAlign="center">
-        Fill in the details below to add a new post to the blog.
+        Fill in the details below to add a new post to hire freelancer.
       </Text>
       <form onSubmit={handleSubmit}>
         <Box mb={4}>

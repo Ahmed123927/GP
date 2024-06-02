@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Question from "../faq/Question";
+import Question from "./Question";
 
 const questions = [
     {

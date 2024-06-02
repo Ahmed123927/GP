@@ -19,12 +19,13 @@ import Footer from '../../Components/footer/Footer'
 // import videoImage from '../../images/video.jpg';
 // import dataImage from '../../images/data.jpg';
 // import lifestyleImage from '../../images/lifestyle.jpg';
-// import imgProfile from'../../images/profile.png';
-import imgProfile from'../../../public/img/test.png';
+import imgProfile from'../../images/profile.png';
+// import imgProfile from'../../../public/img/test.png';
 
 import '../landing/landing.css'
 import Banner from '../../Components/bannar/Banner';
 import LandingSlaider from '../../Components/landingSlaider/LandingSlaider';
+import Ml from '../../ml/Ml';
 export default function Landing() {
   const testimonials = [
     {
@@ -219,6 +220,7 @@ export default function Landing() {
 
     </main>
     <LandingSlaider/>
+    <Ml/>
     <Container maxW="5xl" p={{ base: 5, md: 10 }} bg={useColorModeValue('gray.200', 'gray.600')}>
       <chakra.h3 fontSize="3xl" fontWeight="bold" mb={8} textAlign="center">
         Our Clients

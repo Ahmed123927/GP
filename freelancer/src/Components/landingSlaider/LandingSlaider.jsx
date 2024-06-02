@@ -15,6 +15,7 @@ const StyledUl = styled.ul`
 export default function LandingSlaider() {
   return (
     <div className="void" id="void">
+        
       <div className="crop">
       <StyledUl id="card1-list" style={{ '--count': 6 }}>          <li className='list'>
             <div className="card1">

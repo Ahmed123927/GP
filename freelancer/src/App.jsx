@@ -18,6 +18,7 @@ import Register from "./Pages/register/Register";
 import FreelancerPostsPage from "./Pages/freelancerPostsPage/FreelancerPostsPage";
 import ShowApplicant from "./Pages/showApplicant/ShowApplicant";
 import Landing from "./Pages/landing/Landing";
+import MlPage from "./Pages/mlPage/MlPage";
 
 function App() {
  
@@ -38,6 +39,8 @@ function App() {
           <Route path="/" element={<Landing/>} />
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/register" element={<Register />} />
+          <Route path="/ml" element={<MlPage />} />
+
           <Route
             path="/*"
             element={
