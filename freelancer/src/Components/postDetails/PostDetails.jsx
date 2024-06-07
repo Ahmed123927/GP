@@ -56,18 +56,6 @@ export default function PostDetails() {
     CompanyName = '',
   } = owner;
 
-  const parsedRequirements = requirements.map(req => {
-    if (typeof req === 'string') {
-      try {
-        return JSON.parse(req);
-      } catch (error) {
-        console.error('Error parsing requirement:', error);
-        return [];
-      }
-    }
-    return req;
-  });
-
   const handleApply = () => {
     axios.patch(`http://localhost:3500/user/apply/${_id}`, {}, {
       headers: {
@@ -150,19 +138,11 @@ export default function PostDetails() {
                 Required Skills
               </Text>
 
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
-                <List spacing={2}>
-                  {parsedRequirements.map((reqArray, index) => (
-                    <ListItem key={index}>
-                      <List spacing={1}>
-                        {reqArray.map((requirement, idx) => (
-                          <ListItem key={idx}>{requirement}</ListItem>
-                        ))}
-                      </List>
-                    </ListItem>
-                  ))}
-                </List>
-              </SimpleGrid>
+              <List spacing={2}>
+                {requirements.map((requirement, index) => (
+                  <ListItem key={index}>{requirement}</ListItem>
+                ))}
+              </List>
             </Box>
           </Stack>
 

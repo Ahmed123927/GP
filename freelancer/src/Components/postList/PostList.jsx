@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, SimpleGrid, Text, Heading, Box, useColorModeValue } from '@chakra-ui/react';
 import PostCard from './../postCard/PostCard';
+import PostCardFreelancer from '../postCard/PostCardFreelancer';
 
 const PostList = ({ posts }) => {
   const bgColor = useColorModeValue('gray.100', 'gray.700'); 
@@ -21,11 +22,10 @@ const PostList = ({ posts }) => {
         <Heading as="h1" fontSize="3xl" mb={6} textAlign="center" fontFamily="heading" color={textColor}>
           Related Posts
         </Heading>
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} align="stretch">
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} align="stretch">
           {posts.map((post) => (
-            <PostCard key={post.id} post={post}>
-              <Text isTruncated>{post.content}</Text>
-            </PostCard>
+                     <PostCardFreelancer key={post._id} post={post} postId={post._id} />
+
           ))}
         </SimpleGrid>
       </Box>

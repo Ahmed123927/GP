@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Heading, Text, Flex, Button, Input, Textarea, useToast } from "@chakra-ui/react";
-import Cookies from 'js-cookie';
+import { Box, Heading, Text, Flex, Button, Input, Textarea, Select, useToast } from "@chakra-ui/react";
 import { Link } from 'react-router-dom';
 
 function ClientAddPost() {
@@ -10,24 +9,63 @@ function ClientAddPost() {
   const [category, setCategory] = useState("");
   const [cover, setCover] = useState(null);
   const [requirements, setRequirements] = useState([]);
+  const [skill, setSkill] = useState(""); // New state for skill
   const [errorMsg, setErrorMsg] = useState("");
-  const toast = useToast(); // Initialize the useToast hook
+  const [paymentMethod, setPaymentMethod] = useState("visa");
+  const [amount, setAmount] = useState(0);
+  const [currency, setCurrency] = useState("usd");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCVC, setCardCVC] = useState("");
+  const [paypalEmail, setPaypalEmail] = useState("");
+  const toast = useToast();
+
+  useEffect(() => {
+    if (currency === "usd" || currency === "euro") {
+      setAmount(2);
+    } else if (currency === "egp") {
+      setAmount(100);
+    }
+  }, [currency]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    const paymentDetails = paymentMethod === "paypal" ? 
+      {
+        method: paymentMethod,
+        amount: amount,
+        currency: currency,
+        paypalEmail: paypalEmail
+      } : 
+      {
+        method: paymentMethod,
+        amount: amount,
+        currency: currency,
+        cardNumber: cardNumber,
+        cardExpiry: cardExpiry,
+        cardCVC: cardCVC
+      };
+  
     try {
       const token = localStorage.getItem('jwtToken');
-      // Create a new FormData instance
+      
       const formData = new FormData();
-
-      // Append the fields to the FormData instance
       formData.append('title', title);
       formData.append('description', description);
       formData.append('category', category);
-      formData.append('requirements', JSON.stringify(requirements.map(req => req)));
+      formData.append('requirements', requirements); // Do not stringify requirements array
       formData.append('file', cover);
-
+  
+      Object.entries(paymentDetails).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+  
+      console.log('Form Data:');
+      formData.forEach((value, key) => {
+        console.log(key, value);
+      });
+  
       const response = await axios.post(
         "http://localhost:3500/client/addpost", 
         formData,
@@ -38,10 +76,8 @@ function ClientAddPost() {
           }
         }
       );
-
+  
       console.log("Post response:", response);
-
-      // Show success toast
       toast({
         title: "Success!",
         description: "Post added successfully!",
@@ -49,8 +85,11 @@ function ClientAddPost() {
         duration: 5000,
         isClosable: true,
       });
-
+  
     } catch (error) {
+      if (error.response && error.response.data) {
+        console.error("Error response data:", error.response.data);
+      }
       console.error("Error posting:", error);
       setErrorMsg("Failed to add post. Please try again.");
     }
@@ -61,11 +100,15 @@ function ClientAddPost() {
   };
 
   const handleAddRequirement = () => {
-    if (category.trim() !== "") {
-      setRequirements([...requirements, category.trim()]);
-      setCategory(""); 
+    if (skill.trim() !== "") {
+      // Split the input by comma to handle multiple skills entered at once
+      const newSkills = skill.trim().split(",");
+      // Add each skill to the requirements array
+      setRequirements([...requirements, ...newSkills]);
+      setSkill(""); 
     }
   };
+  
 
   return (
     <Box px={4} py={6} mx="auto" maxW="lg" borderWidth={1} borderRadius="lg" boxShadow="lg">
@@ -94,7 +137,7 @@ function ClientAddPost() {
         <Box mb={4}>
           <label htmlFor="skills" style={{ display: 'block', marginBottom: '0.5rem' }}>Skills</label>
           <Flex alignItems="center">
-            <Input flex="1" id="skills" placeholder="Enter a skill" size="lg" value={category} onChange={(e) => setCategory(e.target.value)} />
+            <Input flex="1" id="skills" placeholder="Enter a skill" size="lg" value={skill} onChange={(e) => setSkill(e.target.value)} />
             <Button size="lg" ml={2} colorScheme="blue" onClick={handleAddRequirement}>Add</Button>
           </Flex>
           <Flex flexWrap="wrap" mt={2} mb={4}>
@@ -104,8 +147,53 @@ function ClientAddPost() {
           </Flex>
         </Box>
 
+        <Box mb={4}>
+          <label htmlFor="paymentMethod" style={{ display: 'block', marginBottom: '0.5rem' }}>Payment Method</label>
+          <Flex>
+            <Button size="lg" colorScheme={paymentMethod === "visa" ? "blue" : "gray"} mr={2} onClick={() => setPaymentMethod("visa")}>Credit Card</Button>
+            <Button size="lg" colorScheme={paymentMethod === "paypal" ? "blue" : "gray"} onClick={() => setPaymentMethod("paypal")}>PayPal</Button>
+          </Flex>
+        </Box>
+
+        {paymentMethod === "visa" && (
+          <>
+            <Box mb={4}>
+              <label htmlFor="cardNumber" style={{ display: 'block', marginBottom: '0.5rem' }}>Card Number</label>
+              <Input id="cardNumber" placeholder="Enter card number" size="lg" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} />
+            </Box>
+            <Box mb={4}>
+              <label htmlFor="cardExpiry" style={{ display: 'block', marginBottom: '0.5rem' }}>Card Expiry</label>
+              <Input id="cardExpiry" placeholder="MM/YY" size="lg" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} />
+            </Box>
+            <Box mb={4}>
+              <label htmlFor="cardCVC" style={{ display: 'block', marginBottom: '0.5rem' }}>Card CVC</label>
+              <Input id="cardCVC" placeholder="CVC" size="lg" value={cardCVC} onChange={(e) => setCardCVC(e.target.value)} />
+            </Box>
+          </>
+        )}
+
+        {paymentMethod === "paypal" && (
+          <Box mb={4}>
+            <label htmlFor="paypalEmail" style={{ display: 'block', marginBottom: '0.5rem' }}>PayPal Email</label>
+            <Input id="paypalEmail" placeholder="Enter PayPal email" size="lg" value={paypalEmail} onChange={(e) => setPaypalEmail(e.target.value)} />
+          </Box>
+        )}
+
+        <Box mb={4}>
+          <label htmlFor="currency" style={{ display: 'block', marginBottom: '0.5rem' }}>Currency</label>
+          <Select id="currency" size="lg" value={currency} onChange={(e) => setCurrency(e.target.value)}>
+            <option value="usd">USD</option>
+            <option value="euro">Euro</option>
+            <option value="egp">EGP</option>
+          </Select>
+        </Box>
+
+        <Box mb={4}>
+          <label htmlFor="amount" style={{ display: 'block', marginBottom: '0.5rem' }}>Amount</label>
+          <Input id="amount" placeholder="Enter amount" size="lg" value={amount} isReadOnly />
+        </Box>
+
         <Flex justifyContent="space-between" alignItems="center">
-          {/* Use Link from react-router-dom */}
           <Link to="/client" style={{ textDecoration: 'none' }}>
             <Flex alignItems="center">
               <Box as="span" w={6} h={6} borderWidth={1} borderRadius="full" mr={2} />
@@ -115,7 +203,30 @@ function ClientAddPost() {
           <Button type="submit" size="lg" colorScheme="blue">Save</Button>
         </Flex>
       </form>
+      
       {errorMsg && <Text color="red">{errorMsg}</Text>}
+
+      {/* Debugging Section */}
+      {/* <Box mt={6} p={4} borderWidth={1} borderRadius="lg">
+        <Heading as="h3" fontSize="xl" mb={4}>Debugging Information</Heading>
+        <Text><strong>Title:</strong> {title}</Text>
+        <Text><strong>Description:</strong> {description}</Text>
+        <Text><strong>Category:</strong> {category}</Text>
+        <Text><strong>Requirements:</strong> {requirements.join(", ")}</Text>
+        <Text><strong>Payment Method:</strong> {paymentMethod}</Text>
+        <Text><strong>Currency:</strong> {currency}</Text>
+        <Text><strong>Amount:</strong> {amount}</Text>
+        {paymentMethod === "visa" && (
+          <>
+            <Text><strong>Card Number:</strong> {cardNumber}</Text>
+            <Text><strong>Card Expiry:</strong> {cardExpiry}</Text>
+            <Text><strong>Card CVC:</strong> {cardCVC}</Text>
+          </>
+        )}
+        {paymentMethod === "paypal" && (
+          <Text><strong>PayPal Email:</strong> {paypalEmail}</Text>
+        )}
+      </Box> */}
     </Box>
   );
 }

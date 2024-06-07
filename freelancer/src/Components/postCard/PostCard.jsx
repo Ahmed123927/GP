@@ -16,8 +16,11 @@ import {
 } from '@chakra-ui/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { BiLike, BiCheckCircle, BiEdit, BiTrash } from 'react-icons/bi';
+import { useToast } from '@chakra-ui/react';
 
-const PostCard = ({ post, user }) => {
+const PostCard = ({ post, user, onDelete })=> {
+  const toast = useToast();
+
   if (!post || !user) {
     return null; // Handle case where post or user data is missing
   }
@@ -50,12 +53,40 @@ const PostCard = ({ post, user }) => {
   };
 
   const handleUpdateClick = () => {
-    // Implement update logic
   };
 
-  const handleDeleteClick = () => {
-    // Implement delete logic
+  const handleDeleteClick = async () => {
+    try {
+      const response = await fetch(`http://localhost:3500/client/deletepost/${_id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+        },
+      });
+
+      if (response.ok) {
+        onDelete(_id); // Notify parent component about successful deletion
+        toast({
+          title: 'Post deleted',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        throw new Error('Failed to delete post');
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: 'Error deleting post',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
+  
+
 
   const handleApplyClick = () => {
   

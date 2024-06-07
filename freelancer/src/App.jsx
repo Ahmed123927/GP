@@ -19,6 +19,11 @@ import FreelancerPostsPage from "./Pages/freelancerPostsPage/FreelancerPostsPage
 import ShowApplicant from "./Pages/showApplicant/ShowApplicant";
 import Landing from "./Pages/landing/Landing";
 import MlPage from "./Pages/mlPage/MlPage";
+import Admin from "./Components/Admin/admin";
+import ManageUsers from "./Components/manageUsers/ManageUsers";
+import Reports from "./Components/reports/Reports";
+import ResetPassword from "./Components/resetPassword/ResetPassword";
+import FreelancerProfile from "./Components/freelancerProfile/FreelancerProfile";
 
 function App() {
  
@@ -26,7 +31,7 @@ function App() {
     <div className="app">
       <Navbar />
       {children}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 
@@ -40,6 +45,14 @@ function App() {
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/register" element={<Register />} />
           <Route path="/ml" element={<MlPage />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/users" element={<ManageUsers />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
+
+
+
 
           <Route
             path="/*"
@@ -56,6 +69,7 @@ function App() {
                   <Route path="/addPost" element={<AddPost />} />
                   <Route path="/freelancer-posts" element={<FreelancerPostsPage />} />
                   <Route path="/applicant/:_id" element={<ShowApplicant />} />
+                  <Route path="/freelancer-profile/:freelancerId" element={<FreelancerProfile/>} />
 
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

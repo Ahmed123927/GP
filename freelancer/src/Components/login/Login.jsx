@@ -10,6 +10,7 @@ import {
   Heading,
   Input,
   Stack,
+  Text,
 } from '@chakra-ui/react';
 
 function Login() {
@@ -20,39 +21,31 @@ function Login() {
 
   const handleLogin = async () => {
     setErrorMsg('');
-  
+
     try {
-      console.log('Logging in...');
       const response = await axios.post('http://localhost:3500/auth/login', {
         email,
         password,
       });
-      console.log('Login response:', response);
-  
+
       const token = response.data.token;
-      console.log('JWT token:', token);
-  
+
       if (token) {
-        
         localStorage.removeItem('jwtToken');
         localStorage.removeItem('userId');
-  
         Cookies.remove('jwt');
-  
+
         localStorage.setItem('jwtToken', token);
-        Cookies.set('jwt', token, { expires: 7 }); 
-  
+        Cookies.set('jwt', token, { expires: 7 });
+
         const tokenParts = token.split('.');
         const payload = JSON.parse(atob(tokenParts[1]));
-        console.log('Payload:', payload);
-  
+
         const userId = payload.id;
-        console.log('User ID:', userId);
-  
+
         localStorage.setItem('userId', userId);
         localStorage.setItem('role', payload.role);
 
-        console.log('Role:', payload.role);
         switch (payload.role) {
           case 'client':
             navigate('/client');
@@ -70,15 +63,13 @@ function Login() {
       } else {
         setErrorMsg('Login failed. Please try again.');
       }
-      
-      // Ensure proper cleanup
-      window.location.reload(); // Reload the page to clear any stale data or components
+
+      window.location.reload();
     } catch (error) {
       console.error('Login failed:', error);
       setErrorMsg('Login failed. Please try again.');
     }
   };
-  
 
   return (
     <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
@@ -104,7 +95,10 @@ function Login() {
           <Button colorScheme="teal" onClick={handleLogin}>
             Log In
           </Button>
-          {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
+          {errorMsg && <Text color="red">{errorMsg}</Text>}
+          <Button variant="link" colorScheme="teal" onClick={() => navigate('/reset-password')}>
+            Forgot Password?
+          </Button>
         </Stack>
       </Flex>
     </Stack>

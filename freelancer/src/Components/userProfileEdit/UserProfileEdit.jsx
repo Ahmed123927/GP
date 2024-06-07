@@ -28,6 +28,8 @@ export default function UserProfileEdit() {
     country: '',
     phone: '',
     skills: [],
+    desc: '',  // Added desc field
+    jobtitle: '',  // Added jobtitle field
   });
 
   const [previousSkills, setPreviousSkills] = useState([]);
@@ -164,6 +166,8 @@ export default function UserProfileEdit() {
           country: userData.country || '',
           phone: userData.phone || '',
           skills: typeof userData.skills === 'string' ? userData.skills.split(',').map(skill => skill.trim()) : [],
+          desc: userData.desc || '',  // Fetching desc
+          jobtitle: userData.jobtitle || '',  // Fetching jobtitle
         });
         setImageUrl(userData.img ? userData.img.secure_url || '' : '');
         setPreviousSkills(userData.skills || []); // Fetch previous skills
@@ -221,28 +225,38 @@ export default function UserProfileEdit() {
           <Input type="tel" name="phone" value={profileData.phone} onChange={handleChange} />
         </FormControl>
         {role === 'freelancer' && (
-          <FormControl>
-            <FormLabel>Skills</FormLabel>
-            <Flex alignItems="center">
-              <Input flex="1" placeholder="Enter a skill" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
-              <Button size="lg" ml={2} colorScheme="blue" onClick={handleAddSkill}>Add</Button>
-            </Flex>
-            <Flex flexWrap="wrap" mt={2}>
-              {/* Render existing skills */}
-              {profileData.skills.map((skill, index) => (
-                <Tag key={index} size="md" borderRadius="full" variant="solid" colorScheme="teal" mr={2} mb={2}>
-                  <TagLabel>{skill}</TagLabel>
-                  <TagCloseButton onClick={() => handleRemoveSkill(index)} />
-                </Tag>
-              ))}
-              {/* Render previous skills */}
-              {previousSkills.map((skill, index) => (
-                <Tag key={index} size="md" borderRadius="full" variant="outline" colorScheme="gray" mr={2} mb={2}>
-                  <TagLabel>{skill}</TagLabel>
-                </Tag>
-              ))}
-            </Flex>
-          </FormControl>
+          <>
+            <FormControl>
+              <FormLabel>Description</FormLabel>
+              <Textarea name="desc" value={profileData.desc} onChange={handleChange} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Job Title</FormLabel>
+              <Input type="text" name="jobtitle" value={profileData.jobtitle} onChange={handleChange} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Skills</FormLabel>
+              <Flex alignItems="center">
+                <Input flex="1" placeholder="Enter a skill" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} />
+                <Button size="lg" ml={2} colorScheme="blue" onClick={handleAddSkill}>Add</Button>
+              </Flex>
+              <Flex flexWrap="wrap" mt={2}>
+                {/* Render existing skills */}
+                {profileData.skills.map((skill, index) => (
+                  <Tag key={index} size="md" borderRadius="full" variant="solid" colorScheme="teal" mr={2} mb={2}>
+                    <TagLabel>{skill}</TagLabel>
+                    <TagCloseButton onClick={() => handleRemoveSkill(index)} />
+                  </Tag>
+                ))}
+                {/* Render previous skills */}
+                {previousSkills.map((skill, index) => (
+                  <Tag key={index} size="md" borderRadius="full" variant="outline" colorScheme="gray" mr={2} mb={2}>
+                    <TagLabel>{skill}</TagLabel>
+                  </Tag>
+                ))}
+              </Flex>
+            </FormControl>
+          </>
         )}
         <Flex justifyContent="space-between" alignItems="center">
           <Button onClick={handleUpdate} colorScheme="blue">Update Profile</Button>

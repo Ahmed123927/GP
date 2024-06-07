@@ -1,85 +1,33 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Featured from '../../Components/featured/Featured';
 import PostList from '../../Components/postList/PostList';
 import FeaturedFreelancer from '../../Components/featureFreelancer/FeatureFreelancer';
 import Contact from '../../Components/contact/Contact';
 import { Spinner, Flex } from '@chakra-ui/react';
 
-const home = () => {
-  const [loading, setLoading] = useState(true); // Set initial loading state to true
-  const posts = [
-    {
-      id: 1,
-      author: 'Ahmed Hussein',
-      authorRole: 'web company',
-      authorAvatar: 'https://bit.ly/sage-adebayo',
-      content: 'test post',
-      imageUrl: '/img/man.png',
-      imageAlt: 'Chakra UI',
-    },
-    {
-      id: 1,
-      author: 'Ahmed mahmoud',
-      authorRole: 'Creator, Chakra UI',
-      authorAvatar: 'https://bit.ly/sage-adebayo',
-      content: 'With Chakra UI, I wanted to sync...',
-      imageUrl: '/img/man.png',
-      imageAlt: 'Chakra UI',
-    },
+const Home = () => {
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
 
-    {
-      id: 2,
-      author: 'Segun Adebayo',
-      authorRole: 'Creator, Chakra UI',
-      authorAvatar: 'https://bit.ly/sage-adebayo',
-      content: 'With Chakra UI, I wanted to sync...',
-      imageUrl: '/img/man.png',
-      imageAlt: 'Chakra UI',
-    },
-    {
-      id: 2,
-      author: 'Segun Adebayo',
-      authorRole: 'Creator, Chakra UI',
-      authorAvatar: 'https://bit.ly/sage-adebayo',
-      content: 'With Chakra UI, I wanted to sync...',
-      imageUrl: '/img/man.png',
-      imageAlt: 'Chakra UI',
-    },
-    {
-      id: 2,
-      author: 'Segun Adebayo',
-      authorRole: 'Creator, Chakra UI',
-      authorAvatar: 'https://bit.ly/sage-adebayo',
-      content: 'With Chakra UI, I wanted to sync...',
-      imageUrl: '/img/man.png',
-      imageAlt: 'Chakra UI',
-    },
-    {
-      id: 2,
-      author: 'Segun Adebayo',
-      authorRole: 'Creator, Chakra UI',
-      authorAvatar: 'https://bit.ly/sage-adebayo',
-      content: 'With Chakra UI, I wanted to sync...',
-      imageUrl: '/img/man.png',
-      
-    },
-    // Add more posts as needed
-  ];
   useEffect(() => {
-    // Simulate a delay for demonstration purposes (you can replace this with your actual data fetching logic)
     const fetchData = async () => {
       try {
-        // Simulate a delay of 2 seconds (adjust as needed)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setLoading(false); // Set loading to false when data is loaded
+        const response = await axios.get('http://localhost:3500/user/relatedPost', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`
+          }
+        });
+        setPosts(response.data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setLoading(false); // Set loading to false even if there's an error
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  }, []);
 
   if (loading) {
     return (
@@ -99,21 +47,23 @@ const home = () => {
       </Flex>
     );
   }
+
   return (
     <div>
-    <div key="home">
-      <Featured />
+      <div key="home">
+        <Featured />
+      </div>
+      <div key="freelancer">
+        <FeaturedFreelancer />
+      </div>
+      <div key="postList">
+        <PostList posts={posts} />
+      </div>
+      <div key="contact">
+        <Contact />
+      </div>
     </div>
-    <div key="freelancer">
-      <FeaturedFreelancer />
-    </div>
-    <div key="postList">
-     
-    </div>
-    <div key="contact">
-      <Contact />
-    </div>
-  </div>
   );
 };
-export default home
+
+export default Home;

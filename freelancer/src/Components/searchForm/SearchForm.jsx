@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled, { createGlobalStyle, keyframes } from 'styled-components';
 import axios from 'axios';
+import { ClipLoader } from 'react-spinners';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -110,24 +111,6 @@ const SearchButton = styled.button`
   }
 `;
 
-const AddKeywordButton = styled.button`
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 20px;
-  background: #ff00ff;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-    background: #9c00ff;
-  }
-`;
-
 const KeywordWrapper = styled.div`
   margin-top: 15px;
   display: flex;
@@ -145,10 +128,10 @@ const Keyword = styled.span`
 `;
 
 const ResultsTable = styled.table`
-//   margin-top: 20px;
-//   width: 80%;
-//   border-collapse: collapse;
-//   text-align: left;
+  margin-top: 20px;
+  width: 80%;
+  border-collapse: collapse;
+  text-align: left;
 `;
 
 const TableHeader = styled.th`
@@ -171,6 +154,7 @@ const TableCell = styled.td`
 const SearchForm = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
@@ -178,14 +162,14 @@ const SearchForm = () => {
 
   const handleSearch = async () => {
     const jwtToken = localStorage.getItem('jwtToken');
-    console.log(jwtToken);
     if (!jwtToken) {
         alert('JWT token not found in local storage');
         return;
     }
 
+    setLoading(true);
+
     try {
-        console.log('Sending search query:', searchQuery); 
         const response = await axios.post('http://localhost:3500/ml/', 
             { Terms: searchQuery }, 
             { headers: { Authorization: `Bearer ${jwtToken}` } }
@@ -193,9 +177,10 @@ const SearchForm = () => {
         setResults(response.data);
     } catch (error) {
         console.error('Error fetching data from API', error);
+    } finally {
+        setLoading(false);
     }
 };
-
 
 return (
     <>
@@ -209,29 +194,33 @@ return (
           value={searchQuery}
           onChange={handleSearchInputChange}
         />
-        <SearchButton onClick={handleSearch}>Get Recomendation</SearchButton>
-        <KeywordWrapper>
-          {Object.keys(results).length > 0 && (
-            <ResultsTable>
-              <thead>
-                <tr>
-                  <TableHeader>Tool</TableHeader>
-                  <TableHeader>Link</TableHeader>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(results).map(([tool, link], index) => (
-                  <TableRow key={index}>
-                    <TableCell>{tool}</TableCell>
-                    <TableCell>
-                      <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </tbody>
-            </ResultsTable>
-          )}
-        </KeywordWrapper>
+        <SearchButton onClick={handleSearch}>Get Recommendation</SearchButton>
+        {loading ? (
+          <ClipLoader color="#ffffff" size={50} />
+        ) : (
+          <KeywordWrapper>
+            {Object.keys(results).length > 0 && (
+              <ResultsTable>
+                <thead>
+                  <tr>
+                    <TableHeader>Tool</TableHeader>
+                    <TableHeader>Link</TableHeader>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(results).map(([tool, link], index) => (
+                    <TableRow key={index}>
+                      <TableCell>{tool}</TableCell>
+                      <TableCell>
+                        <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </tbody>
+              </ResultsTable>
+            )}
+          </KeywordWrapper>
+        )}
       </SearchFormWrapper>
     </>
   );

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -9,32 +10,105 @@ import {
   Button,
   Badge,
   useColorModeValue,
+  HStack,
+  Textarea,
 } from '@chakra-ui/react';
-import axios from 'axios'; 
+import { FaStar } from 'react-icons/fa';
+import axios from 'axios';
 
 const staticMessage = "You are accepted in my post";
 
-export default function FreelancerCard({ id, name, username, bio, tags, avatarSrc }) {
-  
+export default function FreelancerCard({
+  id,
+  name,
+  username,
+  bio,
+  tags = [], // Default to an empty array if tags are undefined
+  avatarSrc,
+  postId,
+  onDecline,
+}) {
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const response = await axios.get(`http://localhost:3500/client/rate/${userId}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+          },
+        });
+
+        if (response.status === 200) {
+          const { rate, comment } = response.data;
+          setRating(rate);
+          setComment(comment);
+        } else {
+          console.error('Failed to fetch rating:', response.statusText);
+        }
+      } catch (error) {
+        console.error('An error occurred while fetching the rating:', error);
+      }
+    };
+
+    fetchRating();
+  }, [id]);
+
   const handleSendMessage = async () => {
     try {
       const response = await axios.post(`http://localhost:3500/message/send/${id}`, {
         message: staticMessage,
       }, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`, 
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
         },
       });
 
       if (response.status === 201) {
-        window.location.href = '/chat'; 
+        window.location.href = '/chat';
       } else {
         console.error('Failed to create new chat:', response.statusText);
-        console.log(response) 
       }
     } catch (error) {
       console.error('An error occurred while creating a new chat:', error);
     }
+  };
+
+  const handleRating = async (rate) => {
+    try {
+      const userId = localStorage.getItem('userId');
+      const response = await axios.patch(`http://localhost:3500/client/rate/${userId}`, {
+        freelancerId: id,
+        rate,
+        comment,
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setRating(rate);
+      } else {
+        console.error('Failed to rate freelancer:', response.statusText);
+      }
+    } catch (error) {
+      console.error('An error occurred while rating the freelancer:', error);
+    }
+  };
+
+// Inside the FreelancerCard component
+const handleDecline = async () => {
+  onDecline(id); // Inform the parent component about the decline
+};
+
+
+  const navigateToProfile = () => {
+    navigate(`/freelancer-profile/${id}`);
   };
 
   return (
@@ -65,7 +139,12 @@ export default function FreelancerCard({ id, name, username, bio, tags, avatarSr
             right: 3,
           }}
         />
-        <Heading fontSize={'2xl'} fontFamily={'body'}>
+        <Heading
+          fontSize={'2xl'}
+          fontFamily={'body'}
+          onClick={navigateToProfile}
+          style={{ cursor: 'pointer', color: 'blue' }}
+        >
           {name}
         </Heading>
         <Text fontWeight={600} color={'gray.500'} mb={4}>
@@ -88,14 +167,36 @@ export default function FreelancerCard({ id, name, username, bio, tags, avatarSr
           ))}
         </Stack>
 
+        <HStack justify="center" mt={4}>
+          {[...Array(5)].map((_, index) => {
+            const starIndex = index + 1;
+            return (
+              <FaStar
+                key={starIndex}
+                size={24}
+                color={starIndex <= (hover || rating) ? 'gold' : 'gray'}
+                onClick={() => setRating(starIndex)}
+                onMouseEnter={() => setHover(starIndex)}
+                onMouseLeave={() => setHover(rating)}
+                style={{ cursor: 'pointer' }}
+              />
+            );
+          })}
+        </HStack>
+
+        <Textarea
+          placeholder="Leave a comment..."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          mt={4}
+        />
+
         <Stack mt={8} direction={'row'} spacing={4}>
           <Button
             flex={1}
             fontSize={'sm'}
             rounded={'full'}
-            onClick={() => {
-              // Implement decline functionality if needed
-            }}
+            onClick={handleDecline}
             _focus={{
               bg: 'gray.200',
             }}>
@@ -116,12 +217,25 @@ export default function FreelancerCard({ id, name, username, bio, tags, avatarSr
             _focus={{
               bg: 'blue.500',
             }}
-            onClick={handleSendMessage} // Call handleSendMessage function when the button is clicked
-           >
-          message
+            onClick={handleSendMessage}
+          >
+            Message
           </Button>
         </Stack>
+
+        <Button
+          mt={4}
+          colorScheme="teal"
+          onClick={() => handleRating(rating)}
+          disabled={rating === 0 || comment.trim() === ''}
+        >
+          Submit Rating
+        </Button>
       </Box>
     </Center>
   );
 }
+
+FreelancerCard.defaultProps = {
+  tags: [],
+};
