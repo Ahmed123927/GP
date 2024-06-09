@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-  Box, Flex, Heading, Text, Avatar, Badge, Divider, Spinner, useToast, VStack, HStack, Container, Center, SimpleGrid, Stack, Card, CardHeader, CardBody, CardFooter
+  Box, Flex, Heading, Text, Avatar, Badge, Divider, Spinner, useToast, VStack, HStack, Container, Center, SimpleGrid, Card, CardHeader, CardBody, CardFooter
 } from '@chakra-ui/react';
 import { FaStar } from 'react-icons/fa';
 import axios from 'axios';
@@ -26,13 +26,19 @@ const FreelancerProfile = () => {
         setRatings(response.data.ratings);
 
         const postIds = response.data.ratings.map(rating => rating.postId);
+        console.log('Post IDs:', postIds);
+
         const postPromises = postIds.map(postId =>
           axios.get(`http://localhost:3500/client/showpost/${postId}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
-          }).then(res => res.data.post)
+          }).then(res => res.data).catch(error => {
+            console.error(`Error fetching post ${postId}:`, error);
+            return null;
+          })
         );
 
         const fetchedPosts = await Promise.all(postPromises);
+        console.log('Fetched posts:', fetchedPosts);
         setPosts(fetchedPosts.filter(post => post));
         setLoading(false);
       } catch (error) {
@@ -88,7 +94,7 @@ const FreelancerProfile = () => {
               <Text><strong>Phone:</strong> {freelancer.phone}</Text>
 
               <HStack wrap="wrap" spacing={2}>
-              <Text><strong>Skills:</strong> </Text>
+                <Text><strong>Skills:</strong> </Text>
                 {freelancer.skills.map((skill, index) => (
                   <Badge key={index} px={2} py={1} bg="blue.50" fontWeight="400">
                     {skill}
@@ -122,8 +128,10 @@ const FreelancerProfile = () => {
               <Text fontStyle="italic">{rating.comment}</Text>
             </CardBody>
             <CardFooter>
-              {posts[index] && (
+              {posts[index] ? (
                 <PostCardFreelancer post={posts[index]} postId={posts[index]._id} />
+              ) : (
+                <Text>No post associated</Text>
               )}
             </CardFooter>
           </Card>

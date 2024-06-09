@@ -24,6 +24,7 @@ import ManageUsers from "./Components/manageUsers/ManageUsers";
 import Reports from "./Components/reports/Reports";
 import ResetPassword from "./Components/resetPassword/ResetPassword";
 import FreelancerProfile from "./Components/freelancerProfile/FreelancerProfile";
+import UpdatePost from "./Components/updatePost/UpdatePost";
 
 function App() {
  
@@ -70,6 +71,7 @@ function App() {
                   <Route path="/freelancer-posts" element={<FreelancerPostsPage />} />
                   <Route path="/applicant/:_id" element={<ShowApplicant />} />
                   <Route path="/freelancer-profile/:freelancerId" element={<FreelancerProfile/>} />
+                  <Route path="/updatePost/:postId" element={<UpdatePost/>} />
 
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

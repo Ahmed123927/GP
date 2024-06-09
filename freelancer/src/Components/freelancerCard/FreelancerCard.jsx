@@ -23,7 +23,7 @@ export default function FreelancerCard({
   name,
   username,
   bio,
-  tags = [], // Default to an empty array if tags are undefined
+  tags = [], 
   avatarSrc,
   postId,
   onDecline,
@@ -81,7 +81,7 @@ export default function FreelancerCard({
   const handleRating = async (rate) => {
     try {
       const userId = localStorage.getItem('userId');
-      const response = await axios.patch(`http://localhost:3500/client/rate/${userId}`, {
+      const response = await axios.patch(`http://localhost:3500/client/rate/${postId}`, {
         freelancerId: id,
         rate,
         comment,
@@ -101,9 +101,9 @@ export default function FreelancerCard({
     }
   };
 
-// Inside the FreelancerCard component
+
 const handleDecline = async () => {
-  onDecline(id); // Inform the parent component about the decline
+  onDecline(id); 
 };
 
 

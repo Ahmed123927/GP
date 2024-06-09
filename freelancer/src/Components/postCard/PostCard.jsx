@@ -17,10 +17,11 @@ import {
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { BiLike, BiCheckCircle, BiEdit, BiTrash } from 'react-icons/bi';
 import { useToast } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const PostCard = ({ post, user, onDelete })=> {
   const toast = useToast();
-
+  const navigate = useNavigate();
   if (!post || !user) {
     return null; // Handle case where post or user data is missing
   }
@@ -53,6 +54,7 @@ const PostCard = ({ post, user, onDelete })=> {
   };
 
   const handleUpdateClick = () => {
+    navigate(`/updatePost/${_id}`);
   };
 
   const handleDeleteClick = async () => {

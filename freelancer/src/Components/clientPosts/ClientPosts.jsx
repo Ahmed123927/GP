@@ -41,7 +41,7 @@ const ClientPosts = ({ user, posts }) => {
           </SimpleGrid>
         ) : (
           <Center flexDirection="column" textAlign="center">
-            <Image src="/empty.svg" alt="Empty State" maxW="200px" mx="auto" mb={4} /> {/* Use a placeholder image */}
+            <Image src="/img/exp p.png" alt="Empty State" maxW="200px" mx="auto" mb={4} /> 
             <Text color="gray.500" fontSize="lg">
               No Posts Yet
             </Text>

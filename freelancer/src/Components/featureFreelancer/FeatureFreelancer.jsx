@@ -66,12 +66,11 @@ export default function SplitWithImage() {
             alignSelf={'flex-start'}
             rounded={'md'}
           >
-            Our Story
+            Why Freelancers Love Us
           </Text>
           <Heading>Elevate your freelance journey</Heading>
           <Text color={'gray.500'} fontSize={'lg'}>
-            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
-            eirmod tempor invidunt ut labore
+          Browse and apply for projects that match your skills.
           </Text>
           <Stack
             spacing={4}
@@ -82,17 +81,17 @@ export default function SplitWithImage() {
             <FeatureFreelancer
               icon={<Icon as={IoAnalyticsSharp} color={'yellow.500'} w={5} h={5} />}
               iconBg={useColorModeValue('yellow.100', 'yellow.900')}
-              text={'Business Planning'}
+              text={'Connect with clients and other freelancers to expand your professional network'}
             />
             <FeatureFreelancer
               icon={<Icon as={IoLogoBitcoin} color={'green.500'} w={5} h={5} />}
               iconBg={useColorModeValue('green.100', 'green.900')}
-              text={'Financial Planning'}
+              text={'Get first step into your Carear'}
             />
             <FeatureFreelancer
               icon={<Icon as={IoSearchSharp} color={'purple.500'} w={5} h={5} />}
               iconBg={useColorModeValue('purple.100', 'purple.900')}
-              text={'Market Analysis'}
+              text={'Grow your professional network'}
             />
           </Stack>
         </MotionStack>

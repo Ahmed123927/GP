@@ -28,7 +28,6 @@ export default function ApplicatFreelancers() {
     fetchData();
   }, [postId]);
 
-  // Import axios
 
 const handleDecline = async (freelancerId) => {
   try {
@@ -41,7 +40,6 @@ const handleDecline = async (freelancerId) => {
     });
 
     if (response.status === 201) {
-      // Refresh page after decline
       window.location.reload();
     } else {
       console.error('Failed to decline freelancer:', response.statusText);

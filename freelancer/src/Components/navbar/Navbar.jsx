@@ -76,13 +76,19 @@ const Navbar = () => {
     <>
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Box>
+          {/* <Box>
             <Link to="/">
               <Text fontSize="xl" fontWeight="bold">
                 +EXP
               </Text>
             </Link>
-          </Box>
+          </Box> */}
+          <Box>
+  <Link to="/">
+    <img src="/img/exp p.png" alt="Logo" style={{ height: '40px', width: 'auto' }} />
+  </Link>
+</Box>
+
 
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>
@@ -116,7 +122,7 @@ const Navbar = () => {
                   </Center>
                   <br />
                   <Center>
-                    <p>{currentUser?.CompanyName || 'Company Name'}</p>
+                    <p>{currentUser?.CompanyName || ''}</p>
                   </Center>
                   <br />
                   <MenuDivider />

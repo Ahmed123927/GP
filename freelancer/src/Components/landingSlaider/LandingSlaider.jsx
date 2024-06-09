@@ -20,48 +20,48 @@ export default function LandingSlaider() {
       <StyledUl id="card1-list" style={{ '--count': 6 }}>          <li className='list'>
             <div className="card1">
               <a href="#">
-                <span className="model-name">Gretel-ACTGAN</span>
-                <span>Model for generating highly dimensional, mostly numeric, tabular data</span>
+                <span className="model-name">Talents</span>
+                <span>Connecting Talent with Opportunity</span>
               </a>
             </div>
           </li>
           <li className='list'>
             <div className="card1">
               <a href="#">
-                <span className="model-name">Gretel-ACTGAN</span>
-                <span>Model for generating highly dimensional, mostly numeric, tabular data</span>
+                <span className="model-name">Project</span>
+                <span>Your Next Project Starts Here</span>
               </a>
             </div>
           </li>
           <li className='list'>
             <div className="card1">
               <a href="#">
-                <span className="model-name">Gretel-ACTGAN</span>
-                <span>Model for generating highly dimensional, mostly numeric, tabular data</span>
+                <span className="model-name">Freelance</span>
+                <span>Freelance Freedom, Client Satisfaction</span>
               </a>
             </div>
           </li>
           <li className='list'> 
             <div className="card1">
               <a href="#">
-                <span className="model-name">Gretel-ACTGAN</span>
-                <span>Model for generating highly dimensional, mostly numeric, tabular data</span>
+                <span className="model-name">Client</span>
+                <span>Where Great Work Meets Great Clients</span>
               </a>
             </div>
           </li>
           <li className='list'>
             <div className="card1">
               <a href="#">
-                <span className="model-name">Gretel-ACTGAN</span>
-                <span>Model for generating highly dimensional, mostly numeric, tabular data</span>
+                <span className="model-name">Talent and Tasks</span>
+                <span>Bridging the Gap Between Talent and Tasks</span>
               </a>
             </div>
           </li>
           <li className='list'>
             <div className="card1">
               <a href="#">
-                <span className="model-name">Gretel-ACTGAN</span>
-                <span>Model for generating highly dimensional, mostly numeric, tabular data</span>
+                <span className="model-name">Quality</span>
+                <span>Quality Freelancers at Your Fingertips</span>
               </a>
             </div>
           </li>

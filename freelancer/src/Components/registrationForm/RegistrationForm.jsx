@@ -14,13 +14,17 @@ import {
   useColorModeValue,
   Alert,
   AlertIcon,
+  useToast,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 export default function RegistrationForm() {
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33.33);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false); // State to manage success message
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const handleRoleSelection = (role) => {
     setSelectedRole(role);
@@ -30,11 +34,20 @@ export default function RegistrationForm() {
 
   const handleBack = () => {
     setStep(1);
-    setProgress(50);
+    setProgress(33.33);
   };
 
   const handleRegistrationSuccess = () => {
-    setRegistrationSuccess(true); // Show success message
+    toast({
+      title: "Registration successful.",
+      description: "You have been registered successfully.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
+    });
+    setTimeout(() => {
+      navigate('/login'); // Redirect to login page after 3 seconds
+    }, 3000);
   };
 
   return (
@@ -50,7 +63,13 @@ export default function RegistrationForm() {
       >
         <Progress hasStripe value={progress} mb="5%" mx="5%" isAnimated></Progress>
         {step === 1 && <RoleChoice onSelectRole={handleRoleSelection} />}
-        {step === 2 && <UserRegistration selectedRole={selectedRole} onRegistrationSuccess={handleRegistrationSuccess} />}
+        {step === 2 && (
+          <UserRegistration
+            selectedRole={selectedRole}
+            onRegistrationSuccess={handleRegistrationSuccess}
+            setError={setError}
+          />
+        )}
         <ButtonGroup mt="5%" w="100%">
           <Flex w="100%" justifyContent="space-between">
             <Flex>
@@ -68,10 +87,10 @@ export default function RegistrationForm() {
           </Flex>
         </ButtonGroup>
       </Box>
-      {registrationSuccess && (
-        <Alert status="success" mt={4}>
+      {error && (
+        <Alert status="error" mt={4}>
           <AlertIcon />
-          Registration successful!
+          {error}
         </Alert>
       )}
     </>
@@ -143,7 +162,7 @@ function RoleChoice({ onSelectRole }) {
   );
 }
 
-function UserRegistration({ selectedRole, onRegistrationSuccess }) {
+function UserRegistration({ selectedRole, onRegistrationSuccess, setError }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -151,9 +170,9 @@ function UserRegistration({ selectedRole, onRegistrationSuccess }) {
 
   const handleSubmit = async () => {
     try {
+      setError('');
       if (!selectedRole || (selectedRole !== 'freelancer' && selectedRole !== 'client')) {
-        console.error('Invalid selected role');
-        return;
+        throw new Error('Invalid selected role');
       }
 
       const response = await fetch('http://localhost:3500/auth/register', {
@@ -168,12 +187,23 @@ function UserRegistration({ selectedRole, onRegistrationSuccess }) {
           role: selectedRole,
         }),
       });
+
+      if (response.status === 409) {
+        const errorData = await response.json();
+        throw new Error(errorData.msg || 'Email is already registered!');
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
       const data = await response.json();
       console.log('Registration successful:', data);
-      onRegistrationSuccess(); 
-      window.location.href = '/login';
-        } catch (error) {
+      onRegistrationSuccess();
+    } catch (error) {
       console.error('Registration failed:', error);
+      setError(error.message);
     }
   };
 
@@ -187,14 +217,24 @@ function UserRegistration({ selectedRole, onRegistrationSuccess }) {
           <FormLabel htmlFor="first-name" fontWeight={'normal'}>
             First name
           </FormLabel>
-          <Input id="first-name" placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+          <Input
+            id="first-name"
+            placeholder="First name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
         </FormControl>
 
         <FormControl mb="1rem">
           <FormLabel htmlFor="last-name" fontWeight={'normal'}>
             Last name
           </FormLabel>
-          <Input id="last-name" placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <Input
+            id="last-name"
+            placeholder="Last name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
         </FormControl>
 
         <FormControl mb="1rem">
@@ -209,7 +249,13 @@ function UserRegistration({ selectedRole, onRegistrationSuccess }) {
           <FormLabel htmlFor="password" fontWeight={'normal'}>
             Password
           </FormLabel>
-          <Input pr="4.5rem" type="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            pr="4.5rem"
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </FormControl>
 
         <Button mt="1rem" colorScheme="teal" onClick={handleSubmit}>

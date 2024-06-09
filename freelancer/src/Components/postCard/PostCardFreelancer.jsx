@@ -93,7 +93,7 @@ const PostCardFreelancer = ({ post, postId }) => {
             size="sm"
             variant="ghost"
           >
-            Apply
+            Show details
           </Button>
         </CardFooter>
       </Card>

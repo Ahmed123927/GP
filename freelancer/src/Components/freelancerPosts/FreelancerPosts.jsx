@@ -19,7 +19,7 @@ export default function FreelancerPosts() {
       }
     })
       .then(response => {
-        console.log('Fetched all posts:', response.data); // Debugging line
+        console.log('Fetched all posts:', response.data); 
         setPosts(response.data);
       })
       .catch(error => {
@@ -84,10 +84,12 @@ export default function FreelancerPosts() {
           Reset
         </Button>
       </Flex>
-      <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={10}>
-        {posts.map(post => (
-          <PostCardFreelancer key={post._id} post={post} postId={post._id} />
-        ))}
+      <SimpleGrid columns={{ base: 1, sm:  2, md: 3 }} spacing={10}>
+      {posts
+  .filter(post => post !== null)
+  .map(post => (
+    post && <PostCardFreelancer key={post._id} post={post} postId={post._id} />
+  ))}
       </SimpleGrid>
     </Box>
   );

@@ -1,30 +1,19 @@
 import React, { useState } from 'react';
-import styled, { createGlobalStyle, keyframes } from 'styled-components';
 import axios from 'axios';
-import { ClipLoader } from 'react-spinners';
-
-const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(45deg, #ff9a9e, #fad0c4, #ffd1ff, #fcb69f, #ff9a9e);
-    background-size: 400% 400%;
-    animation: gradient 10s ease infinite;
-    font-family: 'Arial', sans-serif;
-  }
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-`;
+import {
+  Box,
+  Button,
+  Spinner,
+  Input,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  Heading,
+} from '@chakra-ui/react';
+import styled, { keyframes } from 'styled-components';
 
 const neonGlow = keyframes`
   0%, 100% {
@@ -51,108 +40,13 @@ const neonGlow = keyframes`
   }
 `;
 
-const SearchFormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  padding: 40px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-`;
-
-const SearchInput = styled.input`
-  width: 400px;
-  height: 50px;
-  padding: 10px;
-  border: 2px solid #ff00ff;
-  border-radius: 25px;
-  font-size: 1.5rem;
-  outline: none;
-  background: rgba(255, 255, 255, 0.2);
-  color: #000;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease-in-out;
-
-  &:focus {
-    width: 500px;
-    background: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-  }
-`;
-
-const SearchLabel = styled.label`
-  position: absolute;
-  top: -45px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2.5rem;
-  color: #fff;
+const NeonHeading = styled(Heading)`
   animation: ${neonGlow} 1.5s ease-in-out infinite alternate;
-`;
-
-const SearchButton = styled.button`
-  margin-top: 20px;
-  padding: 12px 24px;
-  font-size: 1.5rem;
-  border: none;
-  border-radius: 25px;
-  background: linear-gradient(135deg, #ff4e50, #f9d423);
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-    background: linear-gradient(135deg, #f9d423, #ff4e50);
-  }
-`;
-
-const KeywordWrapper = styled.div`
-  margin-top: 15px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-`;
-
-const Keyword = styled.span`
-  margin: 5px;
-  padding: 8px 15px;
-  background-color: #ff00ff;
-  color: #fff;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-`;
-
-const ResultsTable = styled.table`
-  margin-top: 20px;
-  width: 80%;
-  border-collapse: collapse;
-  text-align: left;
-`;
-
-const TableHeader = styled.th`
-  background: #ff00ff;
-  color: #fff;
-  padding: 10px;
-`;
-
-const TableRow = styled.tr`
-  &:nth-child(even) {
-    background: rgba(255, 255, 255, 0.2);
-  }
-`;
-
-const TableCell = styled.td`
-  padding: 10px;
-  border: 1px solid #ff00ff;
+  color: #ff00ff;
 `;
 
 const SearchForm = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -161,68 +55,98 @@ const SearchForm = () => {
   };
 
   const handleSearch = async () => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (!jwtToken) {
-        alert('JWT token not found in local storage');
-        return;
-    }
-
     setLoading(true);
 
     try {
-        const response = await axios.post('http://localhost:3500/ml/', 
-            { Terms: searchQuery }, 
-            { headers: { Authorization: `Bearer ${jwtToken}` } }
-        );
-        setResults(response.data);
+      const response = await axios.post('http://localhost:3500/ml/', {
+        Terms: searchQuery,
+      });
+      setResults(response.data);
     } catch (error) {
-        console.error('Error fetching data from API', error);
+      console.error('Error fetching data from API', error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-return (
-    <>
-      <GlobalStyle />
-      <SearchFormWrapper>
-        <SearchLabel htmlFor="search">Ai Tools</SearchLabel>
-        <SearchInput
-          id="search"
-          type="text"
-          placeholder="Type Skill"
-          value={searchQuery}
-          onChange={handleSearchInputChange}
-        />
-        <SearchButton onClick={handleSearch}>Get Recommendation</SearchButton>
-        {loading ? (
-          <ClipLoader color="#ffffff" size={50} />
-        ) : (
-          <KeywordWrapper>
-            {Object.keys(results).length > 0 && (
-              <ResultsTable>
-                <thead>
-                  <tr>
-                    <TableHeader>Tool</TableHeader>
-                    <TableHeader>Link</TableHeader>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(results).map(([tool, link], index) => (
-                    <TableRow key={index}>
-                      <TableCell>{tool}</TableCell>
-                      <TableCell>
-                        <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </tbody>
-              </ResultsTable>
-            )}
-          </KeywordWrapper>
-        )}
-      </SearchFormWrapper>
-    </>
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      minHeight="100vh"
+    >
+      <NeonHeading as="h1" fontSize="3xl" marginBottom="20px">Ai Tools</NeonHeading>
+      <Input
+        id="search"
+        type="text"
+        placeholder="Type Skill"
+        value={searchQuery}
+        onChange={handleSearchInputChange}
+        width="400px"
+        height="50px"
+        padding="10px"
+        border="2px solid #ff00ff"
+        borderRadius="25px"
+        fontSize="1.5rem"
+        outline="none"
+        background="rgba(255, 255, 255, 0.2)"
+        color="#000"
+        textAlign="center"
+        boxShadow="0 0 20px rgba(255, 255, 255, 0.2)"
+        transition="all 0.3s ease-in-out"
+        _focus={{
+          width: '500px',
+          background: 'rgba(255, 255, 255, 0.4)',
+          boxShadow: '0 0 30px rgba(255, 255, 255, 0.4)',
+        }}
+      />
+      <Button
+        marginTop="20px"
+        padding="12px 24px"
+        fontSize="1.5rem"
+        borderRadius="25px"
+        background="linear-gradient(135deg, #ff4e50, #f9d423)"
+        color="white"
+        cursor="pointer"
+        boxShadow="0 0 20px rgba(255, 255, 255, 0.2)"
+        transition="all 0.3s ease-in-out"
+        _hover={{
+          boxShadow: '0 0 30px rgba(255, 255, 255, 0.4)',
+          background: 'linear-gradient(135deg, #f9d423, #ff4e50)',
+        }}
+        onClick={handleSearch}
+      >
+        Get Recommendation
+      </Button>
+      {loading ? (
+        <Spinner size="xl" color="black" marginTop="15px" />
+      ) : (
+        <Box marginTop="15px">
+          {Object.keys(results).length > 0 && (
+            <Table width="80%" marginTop="20px" variant="simple" colorScheme="pink">
+              <Thead>
+                <Tr>
+                  <Th>Tool</Th>
+                  <Th>Link</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {Object.entries(results).map(([tool, link], index) => (
+                  <Tr key={index}>
+                    <Td>{tool}</Td>
+                    <Td>
+                      <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          )}
+        </Box>
+      )}
+    </Box>
   );
 };
 

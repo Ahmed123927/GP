@@ -23,6 +23,7 @@ import { useParams } from 'react-router-dom';
 export default function PostDetails() {
   const { _id } = useParams();
   const [post, setPost] = useState(null);
+  const [estimatedTime, setEstimatedTime] = useState('');
   const toast = useToast();
 
   useEffect(() => {
@@ -32,7 +33,8 @@ export default function PostDetails() {
       }
     })
     .then(response => {
-      setPost(response.data);
+      setPost(response.data.post);
+      setEstimatedTime(response.data.Estimated_Time);
     })
     .catch(error => {
       console.error('Error fetching post details:', error);
@@ -117,6 +119,12 @@ export default function PostDetails() {
               fontSize={'2xl'}>
               {CompanyName}
             </Text>
+            <Text
+              color={useColorModeValue('gray.900', 'gray.400')}
+              fontWeight={300}
+              fontSize={'xl'}>
+              Estimated Time: {estimatedTime}
+            </Text>
           </Box>
 
           <Stack
@@ -137,10 +145,11 @@ export default function PostDetails() {
                 mb={'4'}>
                 Required Skills
               </Text>
-
-              <List spacing={2}>
+              <List styleType="none" padding={0} margin={0}>
                 {requirements.map((requirement, index) => (
-                  <ListItem key={index}>{requirement}</ListItem>
+                  <ListItem key={index} margin={0} padding={0}>
+                    <Text>{requirement}</Text>
+                  </ListItem>
                 ))}
               </List>
             </Box>

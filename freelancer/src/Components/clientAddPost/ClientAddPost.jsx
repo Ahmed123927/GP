@@ -1,3 +1,5 @@
+// File path: src/components/ClientAddPost.js
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Box, Heading, Text, Flex, Button, Input, Textarea, Select, useToast } from "@chakra-ui/react";
@@ -9,7 +11,7 @@ function ClientAddPost() {
   const [category, setCategory] = useState("");
   const [cover, setCover] = useState(null);
   const [requirements, setRequirements] = useState([]);
-  const [skill, setSkill] = useState(""); // New state for skill
+  const [skill, setSkill] = useState(""); 
   const [errorMsg, setErrorMsg] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("visa");
   const [amount, setAmount] = useState(0);
@@ -54,7 +56,7 @@ function ClientAddPost() {
       formData.append('title', title);
       formData.append('description', description);
       formData.append('category', category);
-      formData.append('requirements', requirements); // Do not stringify requirements array
+      formData.append('requirements', requirements.join(', ')); 
       formData.append('file', cover);
   
       Object.entries(paymentDetails).forEach(([key, value]) => {
@@ -94,6 +96,7 @@ function ClientAddPost() {
       setErrorMsg("Failed to add post. Please try again.");
     }
   };
+  
 
   const handleFileChange = (e) => {
     setCover(e.target.files[0]);
@@ -101,13 +104,12 @@ function ClientAddPost() {
 
   const handleAddRequirement = () => {
     if (skill.trim() !== "") {
-      // Split the input by comma to handle multiple skills entered at once
-      const newSkills = skill.trim().split(",");
-      // Add each skill to the requirements array
-      setRequirements([...requirements, ...newSkills]);
+      const newSkills = skill.trim().split(",").map(skill => skill.trim()); // Split by commas and trim each skill
+      setRequirements(prevRequirements => [...prevRequirements, ...newSkills]);
       setSkill(""); 
     }
   };
+  
   
 
   return (
@@ -116,8 +118,9 @@ function ClientAddPost() {
         Add a New Post
       </Heading>
       <Text color="gray.600" mb={6} textAlign="center">
-        Fill in the details below to add a new post to hire freelancer.
+        Fill in the details below to add a new post to hire freelancer
       </Text>
+      
       <form onSubmit={handleSubmit}>
         <Box mb={4}>
           <label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem' }}>Title</label>
@@ -146,7 +149,9 @@ function ClientAddPost() {
             ))}
           </Flex>
         </Box>
-
+        <Text color="gray.600" mb={6} textAlign="center">
+        Your First Post For Free
+      </Text>
         <Box mb={4}>
           <label htmlFor="paymentMethod" style={{ display: 'block', marginBottom: '0.5rem' }}>Payment Method</label>
           <Flex>
@@ -205,28 +210,6 @@ function ClientAddPost() {
       </form>
       
       {errorMsg && <Text color="red">{errorMsg}</Text>}
-
-      {/* Debugging Section */}
-      {/* <Box mt={6} p={4} borderWidth={1} borderRadius="lg">
-        <Heading as="h3" fontSize="xl" mb={4}>Debugging Information</Heading>
-        <Text><strong>Title:</strong> {title}</Text>
-        <Text><strong>Description:</strong> {description}</Text>
-        <Text><strong>Category:</strong> {category}</Text>
-        <Text><strong>Requirements:</strong> {requirements.join(", ")}</Text>
-        <Text><strong>Payment Method:</strong> {paymentMethod}</Text>
-        <Text><strong>Currency:</strong> {currency}</Text>
-        <Text><strong>Amount:</strong> {amount}</Text>
-        {paymentMethod === "visa" && (
-          <>
-            <Text><strong>Card Number:</strong> {cardNumber}</Text>
-            <Text><strong>Card Expiry:</strong> {cardExpiry}</Text>
-            <Text><strong>Card CVC:</strong> {cardCVC}</Text>
-          </>
-        )}
-        {paymentMethod === "paypal" && (
-          <Text><strong>PayPal Email:</strong> {paypalEmail}</Text>
-        )}
-      </Box> */}
     </Box>
   );
 }

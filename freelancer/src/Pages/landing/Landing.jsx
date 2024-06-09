@@ -65,8 +65,8 @@ export default function Landing() {
       {/* Navigation*/}
       <nav className="navbar navbar-expand-lg navbar-light bg-white py-3">
         <div className="container px-5">
-          <a className="navbar-brand" href=""><span className="fw-bolder text-primary">+EXP</span></a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon" /></button>
+        <img src="/img/exp p.png" alt="Logo" style={{ height: '70px', width: 'auto' }} />
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon" /></button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
               <li className="nav-item"><a className="nav-link" href="\login">Login</a></li>
@@ -85,8 +85,8 @@ export default function Landing() {
         <div className="text-center text-xxl-start">
           <div className="badge bg-gradient-primary-to-secondary text-white mb-4"><div className="text-uppercase">Get 
           your first step into expriance</div></div>
-          <div className="fs-3 fw-light text-muted">we can help your business to</div>
-          <h1 className="display-3 fw-bolder mb-5"><span className="text-gradient d-inline">Get online and grow fast</span></h1>
+          <div className="fs-3 fw-light text-muted">Connecting Talent with Opportunity</div>
+          <h1 className="display-3 fw-bolder mb-5"><span className="text-gradient d-inline">Find the Perfect Freelancer for Your Needs</span></h1>
           <div className="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xxl-start mb-3">
            
           </div>
@@ -98,7 +98,7 @@ export default function Landing() {
           <div className="profile bg-gradient-primary-to-secondary">
             {/* TIP: For best results, use a photo with a transparent background like the demo example below*/}
             {/* Watch a tutorial on how to do this on YouTube (link)*/}
-            <img className="profile-img" src={imgProfile} alt="..." />
+            <img className="profile-img" src="/img/exp p.png" alt="..." />
             <div className="dots-1">
               {/* SVG Dots*/}
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 191.6 1215.4" style={{enableBackground: 'new 0 0 191.6 1215.4'}} xmlSpace="preserve">
